@@ -23,6 +23,7 @@
             overflow: hidden; /* Strictly prevents all scrolling */
             font-family: 'Quicksand', sans-serif;
             background-color: #ffecd2;
+            position: relative;
         }
 
         /* Responsive page containers */
@@ -792,6 +793,138 @@
             0% { transform: translateY(0) scale(1); }
             100% { transform: translateY(-2vh) scale(1.02); }
         }
+
+        /* =========================================
+           CONTINUE BUTTON & COMPOSITOR-THREAD RINGS
+           ========================================= */
+        .continue-btn {
+            position: absolute;
+            bottom: 4.5vh;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 3vmin;
+            font-weight: 700;
+            color: white;
+            background: linear-gradient(135deg, #ff477e, #d81b60);
+            border: 0.3vmin solid #ffc2d1;
+            padding: 1.4vh 4.5vw;
+            border-radius: 5vmin;
+            cursor: pointer;
+            box-shadow: 0 1vmin 2.5vmin rgba(216, 27, 96, 0.35);
+            z-index: 20;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(2.5vh) scale(0.9);
+            transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
+        }
+
+        .continue-btn.show {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateY(0) scale(1);
+            animation: btnPulse 2s ease-in-out 0.8s infinite alternate;
+        }
+
+        .continue-btn:hover {
+            transform: scale(1.08) translateY(-0.3vh);
+            box-shadow: 0 1.5vmin 3vmin rgba(216, 27, 96, 0.5);
+        }
+
+        @keyframes btnPulse {
+            0% { transform: scale(1); box-shadow: 0 1vmin 2.5vmin rgba(216, 27, 96, 0.35); }
+            100% { transform: scale(1.06); box-shadow: 0 1.2vmin 3vmin rgba(255, 71, 126, 0.65); }
+        }
+
+        /* Single-Layer-Per-Ring GPU Container */
+        #flower-rings-transition {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 9999;
+            overflow: hidden;
+        }
+
+        .ring-layer {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate3d(-50%, -50%, 0) scale3d(0, 0, 1);
+            opacity: 0;
+            will-change: transform, opacity;
+            backface-visibility: hidden;
+        }
+
+        .ring-layer.bloom-in {
+            animation: ringBloomIn 0.82s cubic-bezier(0.22, 1.28, 0.36, 1) forwards;
+            animation-delay: var(--bloom-delay, 0ms);
+        }
+
+        .ring-layer.dissolve-out {
+            animation: ringDissolveOut 1.25s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            animation-delay: var(--dissolve-delay, 0ms);
+        }
+
+        @keyframes ringBloomIn {
+            0% {
+                transform: translate3d(-50%, -50%, 0) scale3d(0, 0, 1);
+                opacity: 0;
+            }
+            60% {
+                opacity: 1;
+            }
+            100% {
+                transform: translate3d(-50%, -50%, 0) scale3d(1, 1, 1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes ringDissolveOut {
+            0% {
+                transform: translate3d(-50%, -50%, 0) scale3d(1, 1, 1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate3d(-50%, -50%, 0) scale3d(1.18, 1.18, 1);
+                opacity: 0;
+            }
+        }
+
+        /* Single pre-rendered canvas image per ring rotating on the GPU compositor thread */
+        .ring-canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            will-change: transform;
+            backface-visibility: hidden;
+        }
+
+        .spin-cw {
+            animation: spinCW 16s linear infinite;
+        }
+
+        .spin-ccw {
+            animation: spinCCW 16s linear infinite;
+        }
+
+        @keyframes spinCW {
+            0% { transform: rotate3d(0, 0, 1, 0deg); }
+            100% { transform: rotate3d(0, 0, 1, 360deg); }
+        }
+
+        @keyframes spinCCW {
+            0% { transform: rotate3d(0, 0, 1, 0deg); }
+            100% { transform: rotate3d(0, 0, 1, -360deg); }
+        }
+
+        /* =========================================
+           PAGE 5 BACKGROUND PREVIEW (READY FOR NEXT STEP)
+           ========================================= */
+        #page5 {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 50%, #ffdde1 100%);
+            z-index: 2;
+        }
     </style>
 </head>
 <body>
@@ -854,6 +987,9 @@
 
     <!-- Cute Transition Overlay (For transitioning between Page 3 and Page 4) -->
     <div id="page-transition-overlay"></div>
+
+    <!-- Concentric Flower Circles Transition Container -->
+    <div id="flower-rings-transition"></div>
 
     <!-- =========================================
          LOCKED PAGE 2
@@ -1179,20 +1315,28 @@
         <div class="bouquet-wrapper">
             <img id="bouquet-photo" src="boquet.jpg" alt="Beautiful Bouquet" class="bouquet-img">
         </div>
+
+        <!-- Continue Button (Appears 4s after bouquet & text finish displaying) -->
+        <button id="continue-btn" class="continue-btn">Continue ✨</button>
+    </div>
+
+    <!-- =========================================
+         PAGE 5 (BACKGROUND PREVIEW)
+         ========================================= -->
+    <div id="page5" class="page-container">
+        <!-- Ready for Page 5 content -->
     </div>
 
     <script>
         /* =========================================
            LOCKED PAGE 1 & PAGE 2 JAVASCRIPT
            ========================================= */
-        // Page 1 Sparkles Generation (Using pure responsive units)
         const container = document.getElementById('sparkles-container');
         for (let i = 0; i < 30; i++) {
             let sparkle = document.createElement('div');
             sparkle.classList.add('sparkle');
             sparkle.style.left = Math.random() * 100 + 'vw';
             sparkle.style.top = Math.random() * 100 + 'vh';
-            // Generating size using vmin instead of px
             const size = (Math.random() * 0.5 + 0.3) + 'vmin';
             sparkle.style.width = size;
             sparkle.style.height = size;
@@ -1200,13 +1344,13 @@
             container.appendChild(sparkle);
         }
 
-        // Page Transitions
         const giftBox = document.getElementById('gift-box');
         const wipeTransition = document.getElementById('wipe-transition');
         const page1 = document.getElementById('page1');
         const page2 = document.getElementById('page2');
         const page3 = document.getElementById('page3');
         const page4 = document.getElementById('page4');
+        const page5 = document.getElementById('page5');
 
         giftBox.addEventListener('click', () => {
             giftBox.style.animation = 'none';
@@ -1230,7 +1374,6 @@
             }, 200); 
         });
 
-        // Page 2 Button Logic
         const btnYes = document.getElementById('btn-yes');
         const btnNo = document.getElementById('btn-no');
         const noMsg = document.getElementById('no-msg');
@@ -1263,7 +1406,6 @@
                 curtainTransition.classList.add('curtain-drop');
                 
                 setTimeout(() => {
-                    // Seamlessly switch to Page 3 in the same file
                     page2.style.display = 'none';
                     page3.style.display = 'flex';
                     initPage3();
@@ -1275,7 +1417,7 @@
                     }, 800);
                 }, 1200); 
 
-            }, 4000); 
+            }, 2500); 
         });
 
         /* =========================================
@@ -1309,7 +1451,6 @@
             }
             setInterval(spawnEmoji, 1600);
 
-            // Occasional, Independent Random Eye Blinking for Dogs
             const allDogEyes = document.querySelectorAll('.dog-eyes');
             allDogEyes.forEach((eyeGroup, index) => {
                 function scheduleNextBlink() {
@@ -1328,7 +1469,6 @@
 
         let poppedCount = 0;
 
-        // Balloon Burst & Puppy Jump Interaction
         function popBalloon(index, groupEl, color) {
             if (groupEl.dataset.popped === "true") return;
             groupEl.dataset.popped = "true";
@@ -1336,7 +1476,6 @@
             const balloonEl = groupEl.querySelector('.balloon');
             const rect = balloonEl.getBoundingClientRect();
 
-            // Zero-pixel viewport coordinates for burst particles
             const centerX = ((rect.left + rect.width / 2) / window.innerWidth) * 100;
             const centerY = ((rect.top + rect.height / 2) / window.innerHeight) * 100;
 
@@ -1356,19 +1495,13 @@
                 setTimeout(() => p.remove(), 750);
             }
 
-            // Hide balloon & thread
             groupEl.style.display = 'none';
-
-            // Reveal message card
             document.getElementById('card-' + index).classList.add('show');
-
-            // Jump puppy to safe bottom-right corner of the card
             document.getElementById('dog-' + index).classList.add('jumped');
 
-            // Track popped balloons regardless of order (1st, 2nd, or 3rd popped last)
             poppedCount++;
             if (poppedCount === 3) {
-                setTimeout(startCuteTransitionToNextPage, 6000);
+                setTimeout(startCuteTransitionToNextPage, 5500);
             }
         }
 
@@ -1376,7 +1509,6 @@
             const transitionSymbols = ['🌸', '💖', '✨', '🌷', '💕'];
             const overlay = document.getElementById('page-transition-overlay');
 
-            // Spawn a cute rising wave of blossoms & hearts
             for (let i = 0; i < 28; i++) {
                 setTimeout(() => {
                     const petal = document.createElement('div');
@@ -1391,7 +1523,6 @@
                 }, i * 55);
             }
 
-            // Gently fade out heading & cards and dissolve into warm pink glow, then reveal Page 4
             setTimeout(() => {
                 document.getElementById('main-heading').style.opacity = '0';
                 document.getElementById('main-stage').style.opacity = '0';
@@ -1413,11 +1544,11 @@
         }
 
         /* =========================================
-           LOCKED PAGE 4 JAVASCRIPT
+           PAGE 4 & ULTRA-SMOOTH FLOWER RINGS JAVASCRIPT
            ========================================= */
         const particleContainer = document.getElementById('page4-particles');
         const symbols = ['🌸', '✨', '🩷', '🌷'];
-        let page4Initialized = false;
+        let petalInterval = null;
 
         function createPetal() {
             const el = document.createElement('div');
@@ -1430,14 +1561,11 @@
         }
 
         function initPage4() {
-            if (page4Initialized) return;
-            page4Initialized = true;
-
+            if (petalInterval) return;
             for (let i = 0; i < 5; i++) setTimeout(createPetal, i * 500);
-            setInterval(createPetal, 1800);
+            petalInterval = setInterval(createPetal, 1800);
         }
 
-        // Fallback file extension detector
         const img = document.getElementById('bouquet-photo');
         const fallbacks = ['boquet.jpeg', 'boquet.jpg.jpg', 'bouquet.jpg', 'bouquet.jpeg', 'boquet.png'];
         let attempt = 0;
@@ -1449,7 +1577,6 @@
             }
         };
 
-        // Smart Edge Flood-Fill Background Dissolver with Soft Feathering
         img.onload = function() {
             if (img.dataset.processed === "true") return;
             try {
@@ -1466,13 +1593,11 @@
                 const visited = new Uint8Array(w * h);
                 const stack = [];
 
-                // Catches all white and near-white JPEG compression artifacts in the backdrop
                 function isBackdrop(idx) {
                     const r = data[idx], g = data[idx + 1], b = data[idx + 2];
                     return r > 222 && g > 222 && b > 222 && Math.abs(r - g) < 18 && Math.abs(g - b) < 18;
                 }
 
-                // Seed flood-fill from all 4 outer borders
                 for (let x = 0; x < w; x++) {
                     stack.push(x);
                     stack.push((h - 1) * w + x);
@@ -1500,7 +1625,6 @@
                     }
                 }
 
-                // Smooth 2-pass feathering along the cutout boundary so no white fringe or border remains
                 for (let pass = 0; pass < 2; pass++) {
                     for (let y = 1; y < h - 1; y++) {
                         for (let x = 1; x < w - 1; x++) {
@@ -1529,10 +1653,291 @@
                 img.src = canvas.toDataURL('image/png');
                 img.classList.add('bg-removed');
             } catch (e) {
-                // Local file:// preview uses the boosted brightness/contrast multiply + tighter feathered mask
                 console.log("Using enhanced CSS blend and feather mask for local preview.");
             }
         };
+
+        const continueBtn = document.getElementById('continue-btn');
+        const flowerRingsContainer = document.getElementById('flower-rings-transition');
+
+        setTimeout(() => {
+            continueBtn.classList.add('show');
+        }, 5300);
+
+        const flowerPalettes = {
+            red:      { s0: '#590414', s1: '#c9184a', s2: '#ff4d6d', s3: '#ff8fa3', i0: '#6b0518', i1: '#e01e5a', i2: '#ff758f' },
+            pink:     { s0: '#b51749', s1: '#ff758f', s2: '#ffb3c6', s3: '#fff0f5', i0: '#8f0d36', i1: '#ff4d6d', i2: '#ffccd5' },
+            white:    { s0: '#f4acb7', s1: '#fff0f3', s2: '#ffffff', s3: '#f8f9fa', i0: '#ffb3c6', i1: '#fff5f7', i2: '#ffffff' },
+            yellow:   { s0: '#b45309', s1: '#fbbf24', s2: '#fde68a', s3: '#fef9c3', i0: '#92400e', i1: '#f59e0b', i2: '#fde047' },
+            lavender: { s0: '#4a148c', s1: '#9d4edd', s2: '#e0aaff', s3: '#f3e8ff', i0: '#311b92', i1: '#7b2cbf', i2: '#c77dff' }
+        };
+
+        const flowerBitmaps = {};
+        const flowerThemes = ['red', 'pink', 'white', 'yellow', 'lavender'];
+
+        function createFlowerBitmap(themeKey) {
+            const size = 180;
+            const c = document.createElement('canvas');
+            c.width = size;
+            c.height = size;
+            const ctx = c.getContext('2d');
+            const p = flowerPalettes[themeKey];
+
+            ctx.translate(size / 2, size / 2);
+            const scale = size / 100;
+            ctx.scale(scale, scale);
+
+            const ambGrad = ctx.createRadialGradient(0, 2, 10, 0, 2, 46);
+            ambGrad.addColorStop(0, 'rgba(58, 0, 24, 0.28)');
+            ambGrad.addColorStop(0.6, 'rgba(58, 0, 24, 0.22)');
+            ambGrad.addColorStop(1, 'rgba(58, 0, 24, 0)');
+            ctx.fillStyle = ambGrad;
+            ctx.beginPath();
+            ctx.arc(0, 2, 46, 0, Math.PI * 2);
+            ctx.fill();
+
+            function drawPetalLayer(gradColors, isInner) {
+                const radGrad = ctx.createRadialGradient(0, 10, 2, 0, 5, 45);
+                if (!isInner) {
+                    radGrad.addColorStop(0, gradColors.s0);
+                    radGrad.addColorStop(0.45, gradColors.s1);
+                    radGrad.addColorStop(0.82, gradColors.s2);
+                    radGrad.addColorStop(1, gradColors.s3);
+                } else {
+                    radGrad.addColorStop(0, gradColors.i0);
+                    radGrad.addColorStop(0.55, gradColors.i1);
+                    radGrad.addColorStop(1, gradColors.i2);
+                }
+
+                for (let i = 0; i < 8; i++) {
+                    ctx.save();
+                    ctx.rotate((i * Math.PI) / 4);
+
+                    ctx.beginPath();
+                    ctx.moveTo(0, 0);
+                    ctx.bezierCurveTo(-15, -12, -21, -31, -7, -41);
+                    ctx.bezierCurveTo(-3, -44, -1, -40, 0, -38);
+                    ctx.bezierCurveTo(1, -40, 3, -44, 7, -41);
+                    ctx.bezierCurveTo(21, -31, 15, -12, 0, 0);
+                    ctx.closePath();
+
+                    ctx.fillStyle = radGrad;
+                    ctx.fill();
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.35)';
+                    ctx.lineWidth = 0.5;
+                    ctx.stroke();
+
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.35)';
+                    ctx.lineWidth = 0.85;
+                    ctx.lineCap = 'round';
+                    ctx.beginPath();
+                    ctx.moveTo(0, -4);
+                    ctx.quadraticCurveTo(0, -24, 0, -35);
+                    ctx.stroke();
+
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+                    ctx.lineWidth = 0.6;
+                    ctx.beginPath();
+                    ctx.moveTo(0, -8);
+                    ctx.quadraticCurveTo(-6, -22, -7, -32);
+                    ctx.moveTo(0, -8);
+                    ctx.quadraticCurveTo(6, -22, 7, -32);
+                    ctx.stroke();
+
+                    ctx.restore();
+                }
+            }
+
+            drawPetalLayer(p, false);
+
+            const midShadow = ctx.createRadialGradient(0, 0, 8, 0, 0, 34);
+            midShadow.addColorStop(0.5, 'rgba(58, 0, 24, 0.25)');
+            midShadow.addColorStop(1, 'rgba(58, 0, 24, 0)');
+            ctx.fillStyle = midShadow;
+            ctx.beginPath();
+            ctx.arc(0, 0, 34, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.save();
+            ctx.rotate((22.5 * Math.PI) / 180);
+            ctx.scale(0.82, 0.82);
+            drawPetalLayer(p, true);
+            ctx.restore();
+
+            const inShadow = ctx.createRadialGradient(0, 0, 5, 0, 0, 24);
+            inShadow.addColorStop(0.5, 'rgba(58, 0, 24, 0.25)');
+            inShadow.addColorStop(1, 'rgba(58, 0, 24, 0)');
+            ctx.fillStyle = inShadow;
+            ctx.beginPath();
+            ctx.arc(0, 0, 24, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.save();
+            ctx.rotate((11 * Math.PI) / 180);
+            ctx.scale(0.58, 0.58);
+            drawPetalLayer(p, false);
+            ctx.restore();
+
+            ctx.fillStyle = 'rgba(124, 45, 18, 0.35)';
+            ctx.beginPath();
+            ctx.arc(0, 0, 11.5, 0, Math.PI * 2);
+            ctx.fill();
+
+            for (let i = 0; i < 8; i++) {
+                ctx.save();
+                ctx.rotate((i * Math.PI) / 4);
+                ctx.strokeStyle = 'rgba(254, 240, 138, 0.92)';
+                ctx.lineWidth = 0.9;
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.lineTo(0, -12);
+                ctx.stroke();
+
+                ctx.fillStyle = '#fef9c3';
+                ctx.beginPath();
+                ctx.arc(0, -12.5, 1.5, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+
+            const goldGrad = ctx.createRadialGradient(-2, -2, 1, 0, 0, 7.5);
+            goldGrad.addColorStop(0, '#fffbeb');
+            goldGrad.addColorStop(0.4, '#fde047');
+            goldGrad.addColorStop(0.8, '#eab308');
+            goldGrad.addColorStop(1, '#a16207');
+            ctx.fillStyle = goldGrad;
+            ctx.beginPath();
+            ctx.arc(0, 0, 7.5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#fef08a';
+            ctx.lineWidth = 0.8;
+            ctx.stroke();
+
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+            ctx.beginPath();
+            ctx.arc(-2, -2, 2.2, 0, Math.PI * 2);
+            ctx.fill();
+
+            return c;
+        }
+
+        flowerThemes.forEach(theme => {
+            flowerBitmaps[theme] = createFlowerBitmap(theme);
+        });
+
+        let prebuiltRings = [];
+        let totalRingsCount = 0;
+
+        function prepareFlowerRings() {
+            flowerRingsContainer.innerHTML = '';
+            prebuiltRings = [];
+
+            const vminPx = Math.min(window.innerWidth, window.innerHeight) / 100;
+            const ringStepVmin = 8.8;
+            const flowerSizeVmin = 15.2;
+            const flowerSizePx = flowerSizeVmin * vminPx;
+            const ringStepPx = ringStepVmin * vminPx;
+
+            const maxRadiusPx = Math.hypot(window.innerWidth / 2, window.innerHeight / 2) + flowerSizePx;
+            totalRingsCount = Math.ceil(maxRadiusPx / ringStepPx);
+
+            const frag = document.createDocumentFragment();
+
+            for (let r = 0; r <= totalRingsCount; r++) {
+                const ringEl = document.createElement('div');
+                ringEl.className = 'ring-layer';
+
+                const radiusVmin = r * ringStepVmin;
+                const outerSizeVmin = (r === 0) ? (flowerSizeVmin * 1.08) : (radiusVmin * 2 + flowerSizeVmin);
+                ringEl.style.width = outerSizeVmin.toFixed(2) + 'vmin';
+                ringEl.style.height = outerSizeVmin.toFixed(2) + 'vmin';
+
+                const ringCanvas = document.createElement('canvas');
+                ringCanvas.className = 'ring-canvas ' + (r % 2 === 0 ? 'spin-cw' : 'spin-ccw');
+
+                const rawDiameterPx = outerSizeVmin * vminPx;
+                const maxTexSize = 1100;
+                const renderScale = Math.min(1, maxTexSize / rawDiameterPx);
+                const canvasDim = Math.max(64, Math.round(rawDiameterPx * renderScale));
+
+                ringCanvas.width = canvasDim;
+                ringCanvas.height = canvasDim;
+                const rCtx = ringCanvas.getContext('2d');
+                const center = canvasDim / 2;
+
+                if (r === 0) {
+                    rCtx.drawImage(flowerBitmaps['red'], 0, 0, canvasDim, canvasDim);
+                } else {
+                    const numFlowers = Math.round(7.5 * r);
+                    const angleOffset = (r % 2 === 1) ? (Math.PI / numFlowers) : 0;
+                    const ringPrimaryTheme = flowerThemes[r % flowerThemes.length];
+                    const ringSecondaryTheme = flowerThemes[(r + 2) % flowerThemes.length];
+
+                    const scaledRadius = (radiusVmin * vminPx) * renderScale;
+                    const scaledFlowerSize = flowerSizePx * renderScale;
+                    const halfFlower = scaledFlowerSize / 2;
+
+                    for (let i = 0; i < numFlowers; i++) {
+                        const angle = ((2 * Math.PI * i) / numFlowers) + angleOffset;
+                        const fx = center + Math.cos(angle) * scaledRadius;
+                        const fy = center + Math.sin(angle) * scaledRadius;
+                        const chosenTheme = (i % 2 === 0) ? ringPrimaryTheme : ringSecondaryTheme;
+
+                        rCtx.save();
+                        rCtx.translate(fx, fy);
+                        rCtx.rotate(angle);
+                        rCtx.drawImage(flowerBitmaps[chosenTheme], -halfFlower, -halfFlower, scaledFlowerSize, scaledFlowerSize);
+                        rCtx.restore();
+                    }
+                }
+
+                ringEl.appendChild(ringCanvas);
+                frag.appendChild(ringEl);
+                prebuiltRings.push(ringEl);
+            }
+
+            flowerRingsContainer.appendChild(frag);
+        }
+
+        setTimeout(prepareFlowerRings, 1400);
+
+        continueBtn.addEventListener('click', () => {
+            continueBtn.style.pointerEvents = 'none';
+            continueBtn.style.opacity = '0';
+
+            if (prebuiltRings.length === 0) {
+                prepareFlowerRings();
+            }
+
+            const ringStaggerMs = 280;
+
+            prebuiltRings.forEach((ringEl, r) => {
+                ringEl.style.setProperty('--bloom-delay', (r * ringStaggerMs) + 'ms');
+                ringEl.classList.add('bloom-in');
+            });
+
+            const fullCoverTime = (totalRingsCount * ringStaggerMs) + 900;
+
+            setTimeout(() => {
+                if (petalInterval) clearInterval(petalInterval);
+                page4.style.display = 'none';
+                page5.style.display = 'flex';
+
+                prebuiltRings.forEach((ringEl, index) => {
+                    ringEl.classList.remove('bloom-in');
+                    ringEl.style.transform = 'translate3d(-50%, -50%, 0) scale3d(1, 1, 1)';
+                    ringEl.style.opacity = '1';
+                    ringEl.style.setProperty('--dissolve-delay', (index * 110) + 'ms');
+                    ringEl.classList.add('dissolve-out');
+                });
+
+                const cleanupTime = (prebuiltRings.length * 110) + 1350;
+                setTimeout(() => {
+                    flowerRingsContainer.innerHTML = '';
+                }, cleanupTime);
+
+            }, fullCoverTime);
+        });
     </script>
 </body>
 </html>
