@@ -7,7 +7,7 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;700&family=Great+Vibes&family=Pacifico&family=Quicksand:wght@600;700&family=Varela+Round&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;600;700&family=Great+Vibes&family=Pacifico&family=Quicksand:wght@600;700&family=Varela+Round&display=swap" rel="stylesheet">
     
     <style>
         * {
@@ -15,11 +15,13 @@
             margin: 0;
             padding: 0;
             user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body, html {
             width: 100vw;
             height: 100vh;
+            height: 100dvh;
             overflow: hidden; /* Strictly prevents all scrolling */
             font-family: 'Quicksand', sans-serif;
             background-color: #ffecd2;
@@ -29,6 +31,7 @@
         /* Responsive page containers */
         .page-container {
             height: 100vh;
+            height: 100dvh;
             width: 100vw;
             position: absolute;
             top: 0;
@@ -799,7 +802,7 @@
            ========================================= */
         .continue-btn {
             position: absolute;
-            bottom: 4.5vh;
+            bottom: 12vh;
             font-family: 'Quicksand', sans-serif;
             font-size: 3vmin;
             font-weight: 700;
@@ -919,11 +922,772 @@
         }
 
         /* =========================================
-           PAGE 5 BACKGROUND PREVIEW (READY FOR NEXT STEP)
+           LOCKED PAGE 5: INTERACTIVE POLAROID STACK STYLES
            ========================================= */
         #page5 {
             background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 50%, #ffdde1 100%);
+            background-size: 300% 300%;
+            animation: softBgShift 14s ease infinite;
             z-index: 2;
+            justify-content: space-between;
+            padding: 2.5vh 4vw calc(2.5vh + env(safe-area-inset-bottom, 0px)) 4vw;
+            transition: opacity 0.85s ease, transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        @keyframes softBgShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Ambient floating background elements */
+        #page5-bg-decor {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .p5-float-item {
+            position: absolute;
+            bottom: -10vh;
+            font-size: 3vmin;
+            opacity: 0;
+            animation: p5FloatUp linear forwards;
+        }
+
+        @keyframes p5FloatUp {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            15% { opacity: 0.55; }
+            85% { opacity: 0.55; }
+            100% { transform: translateY(-115vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* Header Section */
+        .p5-header {
+            text-align: center;
+            z-index: 15;
+            flex-shrink: 0;
+        }
+
+        .p5-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: 7vmin;
+            color: #900c3f;
+            font-weight: 700;
+            text-shadow: 0 0.3vmin 1vmin rgba(255, 255, 255, 0.85);
+            line-height: 1.15;
+        }
+
+        .p5-subtitle {
+            font-family: 'Varela Round', sans-serif;
+            font-size: 2.4vmin;
+            color: #b51749;
+            margin-top: 0.6vh;
+            letter-spacing: 0.08vw;
+            opacity: 0;
+            transform: translate3d(0, 32vh, 0) scale(0.4);
+            pointer-events: none;
+            transition: transform 0.75s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.55s ease;
+        }
+
+        .p5-subtitle.revealed {
+            opacity: 0.85;
+            transform: translate3d(0, 0, 0) scale(1);
+        }
+
+        /* Center Stack Stage - Bounded height so bottom button never falls off mobile screens */
+        .polaroid-stage {
+            position: relative;
+            width: 62vmin;
+            height: 60dvh;
+            max-height: 74vmin;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            margin: 0.5vh 0 1vh 0;
+            flex-shrink: 1;
+        }
+
+        .polaroid-stage.unrevealed .polaroid-card:not(#reveal-cover-card) {
+            opacity: 0 !important;
+            transform: translate3d(0, 0, 0) scale(0.86) !important;
+            pointer-events: none !important;
+        }
+
+        #reveal-cover-card {
+            z-index: 60;
+            transform: translate3d(0, 0, 0) rotate(-1deg) scale(1);
+            opacity: 1;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #reveal-cover-card:hover {
+            transform: translate3d(0, -0.6vh, 0) rotate(0deg) scale(1.015);
+            box-shadow: 0 2.2vmin 4.8vmin rgba(144, 12, 63, 0.24);
+        }
+
+        .reveal-card-inner {
+            width: 100%;
+            height: 100%;
+            border-radius: 1.8vmin;
+            background: radial-gradient(circle at center, #fffbfc 0%, #ffe5ec 55%, #ffc2d1 100%);
+            border: 0.3vmin dashed #ff8fa3;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 3vmin;
+            text-align: center;
+            box-shadow: inset 0 0 3vmin rgba(255, 71, 126, 0.08);
+        }
+
+        .reveal-card-text {
+            font-family: 'Varela Round', sans-serif;
+            font-size: 4.2vmin;
+            color: #900c3f;
+            font-weight: 700;
+            text-shadow: 0 0.2vmin 0.8vmin rgba(255, 255, 255, 0.9);
+            animation: gentleBounce 1.8s ease-in-out infinite alternate;
+        }
+
+        .polaroid-card {
+            position: absolute;
+            width: 54vmin;
+            height: 58dvh;
+            max-height: 70vmin;
+            background: #ffffff;
+            border-radius: 2.6vmin;
+            padding: 2.2vmin 2.2vmin 2.8vmin 2.2vmin;
+            box-shadow: 
+                0 1.8vmin 4vmin rgba(144, 12, 63, 0.16),
+                0 0.4vmin 1vmin rgba(0, 0, 0, 0.06);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            cursor: pointer;
+            transform-origin: center center;
+            transition: 
+                transform 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+                opacity 0.55s ease,
+                box-shadow 0.4s ease;
+            will-change: transform, opacity;
+        }
+
+        .washi-tape {
+            position: absolute;
+            top: -1.6vmin;
+            left: 50%;
+            width: 16vmin;
+            height: 3.4vmin;
+            background: rgba(255, 182, 193, 0.78);
+            border-left: 0.3vmin dashed rgba(255, 255, 255, 0.6);
+            border-right: 0.3vmin dashed rgba(255, 255, 255, 0.6);
+            transform: translateX(-50%) rotate(-2.5deg);
+            box-shadow: 0 0.3vmin 0.6vmin rgba(0, 0, 0, 0.08);
+            z-index: 25;
+            pointer-events: none;
+        }
+
+        .polaroid-card:nth-child(even) .washi-tape {
+            background: rgba(253, 224, 71, 0.72);
+            transform: translateX(-50%) rotate(2deg);
+        }
+
+        .polaroid-card[data-pos="0"] {
+            z-index: 40;
+            transform: translate3d(0, 0, 0) rotate(-1deg) scale(1);
+            opacity: 1;
+        }
+
+        .polaroid-card[data-pos="0"]:hover {
+            transform: translate3d(0, -0.6vh, 0) rotate(0deg) scale(1.015);
+            box-shadow: 0 2.2vmin 4.8vmin rgba(144, 12, 63, 0.24);
+        }
+
+        .polaroid-card[data-pos="1"] {
+            z-index: 30;
+            transform: translate3d(1.6vmin, 1.2vh, 0) rotate(3.8deg) scale(0.95);
+            opacity: 0.94;
+            pointer-events: none;
+        }
+
+        .polaroid-card[data-pos="2"] {
+            z-index: 20;
+            transform: translate3d(-1.8vmin, 2.2vh, 0) rotate(-4.5deg) scale(0.90);
+            opacity: 0.85;
+            pointer-events: none;
+        }
+
+        .polaroid-card[data-pos="3"] {
+            z-index: 10;
+            transform: translate3d(0.8vmin, 3vh, 0) rotate(2.2deg) scale(0.85);
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .polaroid-card.peeling {
+            z-index: 70 !important;
+            transform: translate3d(38vmin, -14vh, 0) rotate(22deg) scale(0.88) !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+
+        .media-frame {
+            position: relative;
+            width: 100%;
+            height: 80%;
+            border-radius: 1.8vmin;
+            overflow: hidden;
+            background: linear-gradient(135deg, #fff0f3 0%, #ffe5ec 100%);
+            border: 0.25vmin solid #ffe3ec;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .media-blur-bg {
+            position: absolute;
+            inset: -5%;
+            width: 110%;
+            height: 110%;
+            object-fit: cover;
+            filter: blur(1.8vmin) brightness(0.92);
+            opacity: 0.65;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .polaroid-media {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: block;
+            z-index: 2;
+        }
+
+        .media-placeholder {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 3vmin;
+            text-align: center;
+            background: radial-gradient(circle at center, #fffbfc 0%, #ffdde1 100%);
+            z-index: 3;
+        }
+
+        .placeholder-emoji {
+            font-size: 11vmin;
+            filter: drop-shadow(0 0.8vmin 1.5vmin rgba(216, 27, 96, 0.2));
+            animation: gentleBounce 2.4s ease-in-out infinite alternate;
+        }
+
+        .placeholder-hint {
+            margin-top: 1.5vh;
+            font-size: 2vmin;
+            color: #900c3f;
+            background: rgba(255, 255, 255, 0.75);
+            padding: 0.7vh 2vw;
+            border-radius: 2vmin;
+            font-weight: 700;
+        }
+
+        @keyframes gentleBounce {
+            0% { transform: translateY(0) scale(1); }
+            100% { transform: translateY(-1.2vh) scale(1.06); }
+        }
+
+        .polaroid-caption-box {
+            width: 100%;
+            height: 20%;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            text-align: center;
+            padding: 1.5vh 1.5vmin 0 1.5vmin;
+        }
+
+        .polaroid-caption {
+            font-family: 'Varela Round', sans-serif;
+            font-size: 2.55vmin;
+            color: #900c3f;
+            font-weight: 700;
+            line-height: 1.3;
+        }
+
+        .corner-sticker {
+            position: absolute;
+            bottom: -1.8vmin;
+            right: -2.4vmin;
+            max-width: 38vmin;
+            background: linear-gradient(135deg, #fff9db 0%, #ffec99 100%);
+            color: #8f0d36;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 2.1vmin;
+            font-weight: 700;
+            padding: 0.9vh 2.4vmin;
+            border-radius: 2vmin;
+            border: 0.35vmin solid #ffffff;
+            box-shadow: 0 0.8vmin 2.2vmin rgba(144, 12, 63, 0.22);
+            transform: rotate(-4.5deg);
+            z-index: 30;
+            animation: stickerWiggle 3s ease-in-out infinite alternate;
+        }
+
+        .polaroid-card[data-index="1"] .corner-sticker,
+        .polaroid-card[data-index="3"] .corner-sticker {
+            background: linear-gradient(135deg, #ffe3ec 0%, #ffc2d1 100%);
+            transform: rotate(3.5deg);
+        }
+
+        @keyframes stickerWiggle {
+            0% { transform: rotate(-4.5deg) scale(1); }
+            100% { transform: rotate(-1.8deg) scale(1.04); }
+        }
+
+        /* Mobile-safe bottom controls area so button never goes beyond screen */
+        .p5-controls {
+            position: relative;
+            min-height: 7.5dvh;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-bottom: 1vh;
+            z-index: 50;
+            flex-shrink: 0;
+        }
+
+        .p5-btn {
+            font-family: 'Quicksand', sans-serif;
+            font-size: clamp(14px, 2.8vmin, 22px);
+            font-weight: 700;
+            color: white;
+            background: linear-gradient(135deg, #ff477e, #d81b60);
+            border: 0.3vmin solid #ffc2d1;
+            padding: 1.3vh 5.5vw;
+            border-radius: 5vmin;
+            cursor: pointer;
+            box-shadow: 0 1vmin 2.5vmin rgba(216, 27, 96, 0.32);
+            opacity: 0;
+            transform: translate3d(0, -34vh, 0) scale(0.35);
+            pointer-events: none;
+            transition: transform 0.75s cubic-bezier(0.22, 1.25, 0.36, 1), opacity 0.55s ease, box-shadow 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 1vmin;
+        }
+
+        .p5-btn.revealed {
+            opacity: 1;
+            transform: translate3d(0, 0, 0) scale(1);
+            pointer-events: auto;
+        }
+
+        .p5-btn.revealed:hover {
+            transform: scale(1.06) translateY(-0.3vh);
+            box-shadow: 0 1.4vmin 3vmin rgba(216, 27, 96, 0.48);
+        }
+
+        .p5-btn.revealed:active {
+            transform: scale(0.95);
+        }
+
+        .p5-btn.continue-ready {
+            background: linear-gradient(135deg, #ec4899, #be185d);
+            animation: p5PulseBtn 1.8s ease-in-out infinite alternate;
+        }
+
+        @keyframes p5PulseBtn {
+            0% { transform: scale(1); box-shadow: 0 1vmin 2.5vmin rgba(216, 27, 96, 0.35); }
+            100% { transform: scale(1.07); box-shadow: 0 1.3vmin 3.2vmin rgba(236, 72, 153, 0.65); }
+        }
+
+        .p5-burst-emoji {
+            position: fixed;
+            font-size: 3.4vmin;
+            pointer-events: none;
+            z-index: 999;
+            animation: p5BurstAnim 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes p5BurstAnim {
+            0% { transform: translate(-50%, -50%) scale(0.4) rotate(0deg); opacity: 1; }
+            100% { transform: translate(calc(-50% + var(--bx)), calc(-50% + var(--by))) scale(1.2) rotate(var(--brot)); opacity: 0; }
+        }
+
+        /* =========================================
+           ULTRA-SMOOTH & FEATHERLIGHT PETAL-MIST TRANSITION
+           ========================================= */
+        #smooth-mist-transition {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle at 50% 50%, #fffbfc 0%, #ffe5ec 52%, #ffc2d1 100%);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 9999;
+            transition: opacity 0.85s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        #smooth-mist-transition.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .mist-breeze-item {
+            position: fixed;
+            bottom: -10vh;
+            z-index: 10000;
+            pointer-events: none;
+            animation: mistFloatUp 1.85s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+
+        @keyframes mistFloatUp {
+            0% {
+                transform: translate3d(0, 0, 0) scale(0.5) rotate(0deg);
+                opacity: 0;
+            }
+            20% {
+                opacity: 0.95;
+            }
+            80% {
+                opacity: 0.95;
+            }
+            100% {
+                transform: translate3d(var(--driftX), -118vh, 0) scale(1.15) rotate(var(--rot));
+                opacity: 0;
+            }
+        }
+
+        /* =========================================
+           PAGE 6: RECTANGULAR SCRATCH-CARD KEEPSAKE CAROUSEL ("Fav us moments💖")
+           ========================================= */
+        #page6 {
+            display: none;
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 50%, #ffdde1 100%);
+            background-size: 300% 300%;
+            animation: softBgShift 14s ease infinite;
+            z-index: 1;
+            justify-content: space-between;
+            padding: 2vh 4vw calc(2vh + env(safe-area-inset-bottom, 0px)) 4vw;
+            opacity: 0;
+            transform: scale(0.97);
+            transition: opacity 0.85s ease, transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        #page6.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        #page6-bg-decor {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Top Header */
+        .p6-header {
+            text-align: center;
+            z-index: 25;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .p6-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: 7vmin;
+            color: #900c3f;
+            font-weight: 700;
+            text-shadow: 0 0.3vmin 1vmin rgba(255, 255, 255, 0.9);
+            line-height: 1.15;
+        }
+
+        /* Center 3D Keepsake Carousel Stage - Increased height for taller photos while keeping bottom button safe */
+        .keepsake-carousel-stage {
+            position: relative;
+            width: 92vw;
+            max-width: 90vmin;
+            height: 68dvh;
+            max-height: 82vmin;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 15;
+            perspective: 120vmin;
+            flex-shrink: 1;
+            margin: 0.3vh 0;
+        }
+
+        /* Rectangular Keepsake Frame (Increased height a little for taller photos) */
+        .arch-keepsake-card {
+            position: absolute;
+            width: 56vmin;
+            height: 66dvh;
+            max-height: 79vmin;
+            background: linear-gradient(180deg, #fffdf9 0%, #fff0f5 100%);
+            border-radius: 2.2vmin;
+            padding: 1.6vmin 1.6vmin 1.4vmin 1.6vmin;
+            border: 0.4vmin solid #ffffff;
+            box-shadow: 
+                0 2vmin 4.5vmin rgba(144, 12, 63, 0.18),
+                0 0 0 0.35vmin rgba(255, 182, 193, 0.55),
+                inset 0 0 2vmin rgba(255, 194, 209, 0.35);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            transform-origin: center center;
+            transition: 
+                transform 0.75s cubic-bezier(0.22, 1, 0.36, 1),
+                opacity 0.65s ease,
+                filter 0.65s ease,
+                box-shadow 0.45s ease;
+            will-change: transform, opacity;
+        }
+
+        /* Inner golden stitched border following the Rectangular shape */
+        .arch-keepsake-card::before {
+            content: '';
+            position: absolute;
+            inset: 0.85vmin;
+            border-radius: 1.5vmin;
+            border: 0.28vmin dashed rgba(245, 158, 11, 0.65);
+            pointer-events: none;
+            z-index: 15;
+        }
+
+        /* Rectangular Photo Window (Increased to 86.5% height for taller photo display) */
+        .arch-photo-window {
+            position: relative;
+            width: 100%;
+            height: 86.5%;
+            border-radius: 1.2vmin;
+            overflow: hidden;
+            background: linear-gradient(135deg, #fff0f3 0%, #ffe5ec 100%);
+            border: 0.3vmin solid #ffffff;
+            box-shadow: inset 0 0 1.8vmin rgba(144, 12, 63, 0.12);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .media-layer {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+        }
+
+        /* Interactive Scratch Card Canvas Layer */
+        .scratch-canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 12;
+            cursor: grab;
+            touch-action: none;
+            transition: opacity 0.65s ease;
+        }
+
+        .scratch-canvas:active {
+            cursor: grabbing;
+        }
+
+        .scratch-canvas.scratched-clear {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Floating Pill Plaque Caption at the bottom of the Rectangular Frame */
+        .arch-caption-plaque {
+            width: 96%;
+            height: 11.5%;
+            margin-top: 0.4vh;
+            background: rgba(255, 255, 255, 0.92);
+            border-radius: 1.4vmin;
+            border: 0.25vmin solid #ffe3ec;
+            box-shadow: 0 0.4vmin 1.2vmin rgba(144, 12, 63, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 0.4vh 2vmin;
+            z-index: 20;
+            opacity: 0.25;
+            filter: blur(0.4vmin);
+            transition: opacity 0.6s ease, filter 0.6s ease;
+        }
+
+        .arch-keepsake-card.revealed-card .arch-caption-plaque {
+            opacity: 1;
+            filter: blur(0);
+        }
+
+        .arch-caption-text {
+            font-family: 'Varela Round', sans-serif;
+            font-size: 2.45vmin;
+            color: #900c3f;
+            font-weight: 700;
+            line-height: 1.25;
+        }
+
+        /* Corner sticker on 3rd card stays hidden until 3rd photo is scratched */
+        .arch-keepsake-card .corner-sticker {
+            opacity: 0;
+            transform: rotate(-4.5deg) scale(0.5);
+            pointer-events: none;
+            transition: opacity 0.55s ease, transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .arch-keepsake-card.revealed-card .corner-sticker {
+            opacity: 1;
+            transform: rotate(-4.5deg) scale(1);
+        }
+
+        /* 3D Coverflow / Book-Page Positions */
+        .arch-keepsake-card[data-state="active"] {
+            z-index: 40;
+            opacity: 1;
+            filter: blur(0);
+            transform: translate3d(0, 0, 0) rotateY(0deg) scale(1);
+            pointer-events: auto;
+        }
+
+        /* Previous card peeks softly on the left in 3D */
+        .arch-keepsake-card[data-state="prev"] {
+            z-index: 20;
+            opacity: 0.52;
+            filter: blur(0.15vmin);
+            transform: translate3d(-26vmin, 1.5vh, -14vmin) rotateY(22deg) rotateZ(-4deg) scale(0.82);
+            pointer-events: none;
+        }
+
+        /* Next card peeks softly on the right in 3D */
+        .arch-keepsake-card[data-state="next"] {
+            z-index: 25;
+            opacity: 0.58;
+            filter: blur(0.15vmin);
+            transform: translate3d(26vmin, 1.5vh, -14vmin) rotateY(-22deg) rotateZ(4deg) scale(0.82);
+            pointer-events: none;
+        }
+
+        /* Hidden behind when 2 steps away */
+        .arch-keepsake-card[data-state="far"] {
+            z-index: 10;
+            opacity: 0;
+            transform: translate3d(0, 3vh, -25vmin) scale(0.7);
+            pointer-events: none;
+        }
+
+        /* Page 6 Bottom Controls - Mobile Safe */
+        .p6-controls {
+            position: relative;
+            min-height: 7dvh;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-bottom: 0.8vh;
+            z-index: 50;
+            flex-shrink: 0;
+        }
+
+        .p6-btn {
+            font-family: 'Quicksand', sans-serif;
+            font-size: clamp(14px, 2.8vmin, 22px);
+            font-weight: 700;
+            color: white;
+            background: linear-gradient(135deg, #ff477e, #d81b60);
+            border: 0.3vmin solid #ffc2d1;
+            padding: 1.3vh 5.5vw;
+            border-radius: 5vmin;
+            cursor: pointer;
+            box-shadow: 0 1vmin 2.5vmin rgba(216, 27, 96, 0.32);
+            opacity: 0;
+            transform: translateY(2vh) scale(0.85);
+            pointer-events: none;
+            transition: opacity 0.45s ease, transform 0.45s cubic-bezier(0.22, 1.25, 0.36, 1), box-shadow 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 1vmin;
+        }
+
+        .p6-btn.show-btn {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+        }
+
+        .p6-btn.show-btn:hover {
+            transform: scale(1.06) translateY(-0.3vh);
+            box-shadow: 0 1.4vmin 3vmin rgba(216, 27, 96, 0.48);
+        }
+
+        .p6-btn.show-btn:active {
+            transform: scale(0.95);
+        }
+
+        .p6-btn.final-letter-btn {
+            background: linear-gradient(135deg, #ec4899, #be185d);
+            animation: p5PulseBtn 1.8s ease-in-out infinite alternate;
+        }
+
+        /* =========================================
+           SMOOTH TRANSITION TO FINAL LETTER PAGE (PAGE 6 -> PAGE 7)
+           ========================================= */
+        #letter-breeze-transition {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle at 50% 50%, #fffdf9 0%, #fff0f3 48%, #ffccd5 100%);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 9999;
+            transition: opacity 1.1s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        #letter-breeze-transition.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        #page7 {
+            display: none;
+            background: radial-gradient(circle at 50% 45%, #fffdf9 0%, #ffe5ec 55%, #ffc2d1 100%);
+            z-index: 1;
         }
     </style>
 </head>
@@ -988,7 +1752,7 @@
     <!-- Cute Transition Overlay (For transitioning between Page 3 and Page 4) -->
     <div id="page-transition-overlay"></div>
 
-    <!-- Concentric Flower Circles Transition Container -->
+    <!-- Concentric Flower Circles Transition Container (Page 4 -> Page 5) -->
     <div id="flower-rings-transition"></div>
 
     <!-- =========================================
@@ -1317,15 +2081,187 @@
         </div>
 
         <!-- Continue Button (Appears 4s after bouquet & text finish displaying) -->
-        <button id="continue-btn" class="continue-btn">Continue ✨</button>
+        <button id="continue-btn" class="continue-btn">want more flowers?</button>
     </div>
 
     <!-- =========================================
-         PAGE 5 (BACKGROUND PREVIEW)
+         LOCKED PAGE 5: INTERACTIVE POLAROID STACK
          ========================================= -->
     <div id="page5" class="page-container">
-        <!-- Ready for Page 5 content -->
+        <!-- Ambient Floating Background -->
+        <div id="page5-bg-decor"></div>
+
+        <!-- Top Heading -->
+        <div class="p5-header">
+            <h1 class="p5-title">Moods of Laavi🩷</h1>
+            <p class="p5-subtitle" id="p5-subtitle">Tap the photo or button 💕</p>
+        </div>
+
+        <!-- Center Polaroid Stack -->
+        <div class="polaroid-stage unrevealed" id="polaroid-stage">
+            
+            <!-- Initial Cover Card: "Tap to Reveal😁" -->
+            <div class="polaroid-card" id="reveal-cover-card" data-emojis="✨,🩷,😁,🌸">
+                <div class="washi-tape"></div>
+                <div class="reveal-card-inner">
+                    <p class="reveal-card-text">Tap to Reveal😁</p>
+                </div>
+            </div>
+
+            <!-- Card 1 (1st): Eating Mood (eating.jpg) -->
+            <div class="polaroid-card mood-card" data-index="0" data-pos="0" data-emojis="🍭,😋,😄,✨">
+                <div class="washi-tape"></div>
+                <div class="media-frame">
+                    <div class="media-placeholder">
+                        <div class="placeholder-emoji">🍭😋</div>
+                        <div class="placeholder-hint">eating.jpg</div>
+                    </div>
+                </div>
+                <div class="polaroid-caption-box">
+                    <p class="polaroid-caption">"Eating mood🍭😋"</p>
+                </div>
+                <div class="corner-sticker">looks like a tiny baby 😄</div>
+            </div>
+
+            <!-- Card 2 (2nd): Studying Mood (studying.jpg) -->
+            <div class="polaroid-card mood-card" data-index="1" data-pos="1" data-emojis="📚,🧐,😂,✏️">
+                <div class="washi-tape"></div>
+                <div class="media-frame">
+                    <div class="media-placeholder">
+                        <div class="placeholder-emoji">📚🧐</div>
+                        <div class="placeholder-hint">studying.jpg</div>
+                    </div>
+                </div>
+                <div class="polaroid-caption-box">
+                    <p class="polaroid-caption">"studying mood📚🧐"</p>
+                </div>
+                <div class="corner-sticker">I can't stop laughing at this 😂</div>
+            </div>
+
+            <!-- Card 3 (3rd): Sleeping Mood (sleeping.jpg) -->
+            <div class="polaroid-card mood-card" data-index="2" data-pos="2" data-emojis="😴,☁️,😻,💤">
+                <div class="washi-tape"></div>
+                <div class="media-frame">
+                    <div class="media-placeholder">
+                        <div class="placeholder-emoji">😴☁️</div>
+                        <div class="placeholder-hint">sleeping.jpg</div>
+                    </div>
+                </div>
+                <div class="polaroid-caption-box">
+                    <p class="polaroid-caption">"Sleeping mood 😴☁️"</p>
+                </div>
+                <div class="corner-sticker">cutest baby on the planet 😻</div>
+            </div>
+
+            <!-- Card 4 (4th): Playing Mood (playing.mp4 / puppy.mp4) -->
+            <div class="polaroid-card mood-card" data-index="3" data-pos="3" data-emojis="🐶,💞,😍,🐾">
+                <div class="washi-tape"></div>
+                <div class="media-frame">
+                    <div class="media-placeholder">
+                        <div class="placeholder-emoji">🐶💞</div>
+                        <div class="placeholder-hint">playing.mp4 / puppy.mp4</div>
+                    </div>
+                </div>
+                <div class="polaroid-caption-box">
+                    <p class="polaroid-caption">"playing mood🐶💞"</p>
+                </div>
+                <div class="corner-sticker">Look how happy you are!! 😍</div>
+            </div>
+
+        </div>
+
+        <!-- Bottom Action Button -->
+        <div class="p5-controls">
+            <button id="p5-action-btn" class="p5-btn">Next Mood😊</button>
+        </div>
     </div>
+
+    <!-- =========================================
+         SMOOTH PETAL-MIST & SPARKLE BREEZE TRANSITION (PAGE 5 -> PAGE 6)
+         ========================================= -->
+    <div id="smooth-mist-transition"></div>
+
+    <!-- =========================================
+         PAGE 6: RECTANGULAR SCRATCH-CARD CAROUSEL ("Fav us moments💖")
+         ========================================= -->
+    <div id="page6" class="page-container">
+        <!-- Ambient Floating Sparkles -->
+        <div id="page6-bg-decor"></div>
+
+        <!-- Top Heading ("My" removed, moment pills removed) -->
+        <div class="p6-header">
+            <h1 class="p6-title">Fav us moments💖</h1>
+        </div>
+
+        <!-- Center 3D Rectangular Scratch-Card Carousel -->
+        <div class="keepsake-carousel-stage" id="keepsake-stage">
+            
+            <!-- 1st Moment: first.jpg ("Our very first perfect click ✨") -->
+            <div class="arch-keepsake-card" data-card="0" data-state="active" data-emojis="✨,🌸,😊,💫">
+                <div class="arch-photo-window" id="p6-photo-0">
+                    <div class="media-layer">
+                        <div class="media-placeholder">
+                            <div class="placeholder-emoji">📸✨</div>
+                            <div class="placeholder-hint">first.jpg</div>
+                        </div>
+                    </div>
+                    <canvas class="scratch-canvas"></canvas>
+                </div>
+                <div class="arch-caption-plaque">
+                    <p class="arch-caption-text">"Our very first perfect click ✨"</p>
+                </div>
+            </div>
+
+            <!-- 2nd Moment: second.jpg ("unplanned candid, still best🫶") -->
+            <div class="arch-keepsake-card" data-card="1" data-state="next" data-emojis="🫶,✨,😊,🌸">
+                <div class="arch-photo-window" id="p6-photo-1">
+                    <div class="media-layer">
+                        <div class="media-placeholder">
+                            <div class="placeholder-emoji">🫶✨</div>
+                            <div class="placeholder-hint">second.jpg</div>
+                        </div>
+                    </div>
+                    <canvas class="scratch-canvas"></canvas>
+                </div>
+                <div class="arch-caption-plaque">
+                    <p class="arch-caption-text">"unplanned candid, still best🫶"</p>
+                </div>
+            </div>
+
+            <!-- 3rd Moment: last.jpg ("The last frame of us, treasured the most ✨" + Corner Note) -->
+            <div class="arch-keepsake-card" data-card="2" data-state="far" data-emojis="✨,🌟,😊,🌸">
+                <div class="arch-photo-window" id="p6-photo-2">
+                    <div class="media-layer">
+                        <div class="media-placeholder">
+                            <div class="placeholder-emoji">🌟✨</div>
+                            <div class="placeholder-hint">last.jpg</div>
+                        </div>
+                    </div>
+                    <canvas class="scratch-canvas"></canvas>
+                </div>
+                <div class="arch-caption-plaque">
+                    <p class="arch-caption-text">"The last frame of us, treasured the most ✨"</p>
+                </div>
+                <div class="corner-sticker">Until we take the next one 😊</div>
+            </div>
+
+        </div>
+
+        <!-- Bottom Action Button (Initially hidden on 1st photo until scratched) -->
+        <div class="p6-controls">
+            <button id="p6-action-btn" class="p6-btn">Next moment🫶</button>
+        </div>
+    </div>
+
+    <!-- =========================================
+         SMOOTH TRANSITION TO FINAL BIRTHDAY WISH LETTER (PAGE 6 -> PAGE 7)
+         ========================================= -->
+    <div id="letter-breeze-transition"></div>
+
+    <!-- =========================================
+         PAGE 7 PLACEHOLDER (FINAL BIRTHDAY WISH LETTER)
+         ========================================= -->
+    <div id="page7" class="page-container"></div>
 
     <script>
         /* =========================================
@@ -1351,6 +2287,8 @@
         const page3 = document.getElementById('page3');
         const page4 = document.getElementById('page4');
         const page5 = document.getElementById('page5');
+        const page6 = document.getElementById('page6');
+        const page7 = document.getElementById('page7');
 
         giftBox.addEventListener('click', () => {
             giftBox.style.animation = 'none';
@@ -1549,6 +2487,8 @@
         const particleContainer = document.getElementById('page4-particles');
         const symbols = ['🌸', '✨', '🩷', '🌷'];
         let petalInterval = null;
+        const continueBtn = document.getElementById('continue-btn');
+        const flowerRingsContainer = document.getElementById('flower-rings-transition');
 
         function createPetal() {
             const el = document.createElement('div');
@@ -1564,6 +2504,11 @@
             if (petalInterval) return;
             for (let i = 0; i < 5; i++) setTimeout(createPetal, i * 500);
             petalInterval = setInterval(createPetal, 1800);
+
+            // Show Continue button 4s after bouquet & title entrance finishes (5300ms total from Page 4 reveal)
+            setTimeout(() => {
+                continueBtn.classList.add('show');
+            }, 5300);
         }
 
         const img = document.getElementById('bouquet-photo');
@@ -1656,13 +2601,6 @@
                 console.log("Using enhanced CSS blend and feather mask for local preview.");
             }
         };
-
-        const continueBtn = document.getElementById('continue-btn');
-        const flowerRingsContainer = document.getElementById('flower-rings-transition');
-
-        setTimeout(() => {
-            continueBtn.classList.add('show');
-        }, 5300);
 
         const flowerPalettes = {
             red:      { s0: '#590414', s1: '#c9184a', s2: '#ff4d6d', s3: '#ff8fa3', i0: '#6b0518', i1: '#e01e5a', i2: '#ff758f' },
@@ -1778,44 +2716,127 @@
             drawPetalLayer(p, false);
             ctx.restore();
 
-            ctx.fillStyle = 'rgba(124, 45, 18, 0.35)';
+            // Realistic Botanical Flower Center (Stamens, Pollen Anthers & Phyllotaxis Florets)
+            const centerDepthGrad = ctx.createRadialGradient(0, 0, 2, 0, 0, 14.5);
+            centerDepthGrad.addColorStop(0, 'rgba(65, 18, 5, 0.65)');
+            centerDepthGrad.addColorStop(0.55, 'rgba(90, 25, 10, 0.35)');
+            centerDepthGrad.addColorStop(1, 'rgba(90, 25, 10, 0)');
+            ctx.fillStyle = centerDepthGrad;
             ctx.beginPath();
-            ctx.arc(0, 0, 11.5, 0, Math.PI * 2);
+            ctx.arc(0, 0, 14.5, 0, Math.PI * 2);
             ctx.fill();
 
-            for (let i = 0; i < 8; i++) {
+            const numStamens = 22;
+            for (let i = 0; i < numStamens; i++) {
                 ctx.save();
-                ctx.rotate((i * Math.PI) / 4);
-                ctx.strokeStyle = 'rgba(254, 240, 138, 0.92)';
-                ctx.lineWidth = 0.9;
+                const angle = (i * Math.PI * 2) / numStamens + ((i % 3) * 0.08);
+                ctx.rotate(angle);
+
+                const len = 9.5 + (i % 3) * 1.6;
+                const curve = (i % 2 === 0 ? 1.4 : -1.4);
+
+                const filGrad = ctx.createLinearGradient(0, -4, 0, -len);
+                filGrad.addColorStop(0, 'rgba(146, 64, 14, 0.85)');
+                filGrad.addColorStop(0.6, 'rgba(251, 191, 36, 0.92)');
+                filGrad.addColorStop(1, 'rgba(254, 249, 195, 0.98)');
+
+                ctx.strokeStyle = filGrad;
+                ctx.lineWidth = 0.65;
+                ctx.lineCap = 'round';
                 ctx.beginPath();
-                ctx.moveTo(0, 0);
-                ctx.lineTo(0, -12);
+                ctx.moveTo(0, -4.5);
+                ctx.quadraticCurveTo(curve, -len * 0.65, curve * 0.35, -len);
                 ctx.stroke();
 
-                ctx.fillStyle = '#fef9c3';
+                ctx.save();
+                ctx.translate(curve * 0.35, -len);
+                ctx.rotate(curve * 0.15);
+
+                ctx.fillStyle = 'rgba(120, 53, 15, 0.45)';
                 ctx.beginPath();
-                ctx.arc(0, -12.5, 1.5, 0, Math.PI * 2);
+                ctx.ellipse(0, 0.3, 1.35, 0.85, 0, 0, Math.PI * 2);
                 ctx.fill();
+
+                const antherGrad = ctx.createRadialGradient(-0.3, -0.2, 0.1, 0, 0, 1.35);
+                antherGrad.addColorStop(0, '#ffffff');
+                antherGrad.addColorStop(0.35, '#fef08a');
+                antherGrad.addColorStop(0.75, '#f59e0b');
+                antherGrad.addColorStop(1, '#b45309');
+
+                ctx.fillStyle = antherGrad;
+                ctx.beginPath();
+                ctx.ellipse(0, 0, 1.25, 0.78, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+
                 ctx.restore();
             }
 
-            const goldGrad = ctx.createRadialGradient(-2, -2, 1, 0, 0, 7.5);
-            goldGrad.addColorStop(0, '#fffbeb');
-            goldGrad.addColorStop(0.4, '#fde047');
-            goldGrad.addColorStop(0.8, '#eab308');
-            goldGrad.addColorStop(1, '#a16207');
-            ctx.fillStyle = goldGrad;
-            ctx.beginPath();
-            ctx.arc(0, 0, 7.5, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.strokeStyle = '#fef08a';
-            ctx.lineWidth = 0.8;
-            ctx.stroke();
+            const discRadius = 7.4;
+            const discBaseGrad = ctx.createRadialGradient(-1.5, -1.5, 0.8, 0, 0, discRadius);
+            discBaseGrad.addColorStop(0, '#854d0e');
+            discBaseGrad.addColorStop(0.55, '#713f12');
+            discBaseGrad.addColorStop(0.85, '#422006');
+            discBaseGrad.addColorStop(1, '#271202');
 
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+            ctx.fillStyle = discBaseGrad;
             ctx.beginPath();
-            ctx.arc(-2, -2, 2.2, 0, Math.PI * 2);
+            ctx.arc(0, 0, discRadius, 0, Math.PI * 2);
+            ctx.fill();
+
+            const goldenAngle = 2.39996323;
+            const totalFlorets = 58;
+            for (let i = totalFlorets - 1; i >= 0; i--) {
+                const ratio = i / totalFlorets;
+                const r = (discRadius - 0.6) * Math.sqrt(ratio);
+                const theta = i * goldenAngle;
+                const fx = r * Math.cos(theta);
+                const fy = r * Math.sin(theta);
+
+                const seedRadius = 0.55 + ratio * 0.42;
+
+                ctx.fillStyle = 'rgba(28, 10, 2, 0.65)';
+                ctx.beginPath();
+                ctx.arc(fx + 0.18, fy + 0.22, seedRadius, 0, Math.PI * 2);
+                ctx.fill();
+
+                const floretGrad = ctx.createRadialGradient(
+                    fx - seedRadius * 0.3,
+                    fy - seedRadius * 0.3,
+                    0.05,
+                    fx,
+                    fy,
+                    seedRadius
+                );
+
+                if (ratio < 0.22) {
+                    floretGrad.addColorStop(0, '#d9f99d');
+                    floretGrad.addColorStop(0.5, '#84cc16');
+                    floretGrad.addColorStop(1, '#3f6212');
+                } else if (ratio < 0.52) {
+                    floretGrad.addColorStop(0, '#fef08a');
+                    floretGrad.addColorStop(0.5, '#eab308');
+                    floretGrad.addColorStop(1, '#854d0e');
+                } else {
+                    floretGrad.addColorStop(0, '#fffbeb');
+                    floretGrad.addColorStop(0.45, '#fde047');
+                    floretGrad.addColorStop(0.85, '#d97706');
+                    floretGrad.addColorStop(1, '#78350f');
+                }
+
+                ctx.fillStyle = floretGrad;
+                ctx.beginPath();
+                ctx.arc(fx, fy, seedRadius, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            const centerGlow = ctx.createRadialGradient(-2, -2, 0.5, 0, 0, discRadius);
+            centerGlow.addColorStop(0, 'rgba(255, 255, 255, 0.28)');
+            centerGlow.addColorStop(0.5, 'rgba(254, 240, 138, 0.08)');
+            centerGlow.addColorStop(1, 'rgba(0, 0, 0, 0.22)');
+            ctx.fillStyle = centerGlow;
+            ctx.beginPath();
+            ctx.arc(0, 0, discRadius, 0, Math.PI * 2);
             ctx.fill();
 
             return c;
@@ -1922,6 +2943,7 @@
                 if (petalInterval) clearInterval(petalInterval);
                 page4.style.display = 'none';
                 page5.style.display = 'flex';
+                initPage5Bg();
 
                 prebuiltRings.forEach((ringEl, index) => {
                     ringEl.classList.remove('bloom-in');
@@ -1938,6 +2960,594 @@
 
             }, fullCoverTime);
         });
+
+        /* =========================================
+           LOCKED PAGE 5: GITHUB-READY SMART MEDIA LOADER & LOGIC
+           ========================================= */
+        const mediaConfigs = [
+            {
+                candidates: ['eating.jpg', 'eating.jpeg', 'eating.JPG', 'eating.png', 'lollipop.jpg', 'lollipop.mp4'],
+                fit: 'cover',
+                pos: '50% 42%',
+                scale: '1',
+                useBlurBackdrop: false
+            },
+            {
+                candidates: ['studying.jpg', 'studying.jpeg', 'studying.JPG', 'studying.png', 'study.jpg', 'study.mp4'],
+                fit: 'contain',
+                pos: '50% 50%',
+                scale: '1',
+                useBlurBackdrop: true
+            },
+            {
+                candidates: ['sleeping.jpg', 'sleeping.jpeg', 'sleeping.JPG', 'sleeping.png', 'sleep.jpg', 'sleep.mp4'],
+                fit: 'cover',
+                pos: '50% 50%',
+                scale: '1',
+                useBlurBackdrop: false
+            },
+            {
+                candidates: [
+                    'playing.mp4', 'puppy.mp4', 'playing.MP4', 'puppy.MP4',
+                    'playing.mov', 'puppy.mov', 'playing.webm', 'puppy.webm',
+                    'playing.jpg', 'puppy.jpg'
+                ],
+                fit: 'cover',
+                pos: '50% 44%',
+                scale: '1.06',
+                useBlurBackdrop: false
+            }
+        ];
+
+        const polaroidStage = document.getElementById('polaroid-stage');
+        const revealCoverCard = document.getElementById('reveal-cover-card');
+        const subtitleEl = document.getElementById('p5-subtitle');
+        const cards = Array.from(document.querySelectorAll('.mood-card'));
+        const actionBtn = document.getElementById('p5-action-btn');
+
+        cards.forEach((card, idx) => {
+            const frame = card.querySelector('.media-frame');
+            tryLoadMedia(frame, mediaConfigs[idx], 0, false);
+        });
+
+        function applyMediaStyle(el, config) {
+            el.style.objectFit = config.fit;
+            el.style.objectPosition = config.pos;
+            if (config.scale && config.scale !== '1') {
+                el.style.transform = `scale(${config.scale})`;
+            }
+        }
+
+        function tryLoadMedia(frame, config, attemptIndex, autoPlayImmediately) {
+            if (attemptIndex >= config.candidates.length) return;
+            const file = config.candidates[attemptIndex];
+            const isVideo = /\.(mp4|webm|mov)$/i.test(file);
+
+            if (isVideo) {
+                const vid = document.createElement('video');
+                vid.className = 'polaroid-media';
+                vid.src = file;
+                vid.muted = true;
+                vid.defaultMuted = true;
+                vid.loop = true;
+                vid.playsInline = true;
+                vid.setAttribute('playsinline', '');
+                vid.setAttribute('webkit-playsinline', '');
+                vid.preload = 'auto';
+                applyMediaStyle(vid, config);
+
+                let loaded = false;
+                const onReady = () => {
+                    if (loaded) return;
+                    loaded = true;
+                    frame.innerHTML = '';
+                    frame.appendChild(vid);
+                    if (autoPlayImmediately) vid.play().catch(() => {});
+                };
+
+                vid.addEventListener('loadeddata', onReady);
+                vid.addEventListener('canplay', onReady);
+                vid.addEventListener('error', () => {
+                    if (!loaded) tryLoadMedia(frame, config, attemptIndex + 1, autoPlayImmediately);
+                });
+            } else {
+                const imgEl = new Image();
+                imgEl.className = 'polaroid-media';
+                applyMediaStyle(imgEl, config);
+
+                imgEl.onload = () => {
+                    frame.innerHTML = '';
+                    if (config.useBlurBackdrop) {
+                        const blurBg = new Image();
+                        blurBg.src = file;
+                        blurBg.className = 'media-blur-bg';
+                        frame.appendChild(blurBg);
+                    }
+                    frame.appendChild(imgEl);
+                };
+                imgEl.onerror = () => tryLoadMedia(frame, config, attemptIndex + 1, autoPlayImmediately);
+                imgEl.src = file;
+            }
+        }
+
+        /* =========================================
+           LOCKED PAGE 5: INITIAL REVEAL & INTERACTIVE POLAROID STACK LOGIC
+           ========================================= */
+        let isRevealed = false;
+        let currentIndex = 0;
+        let viewedAllFour = false;
+        let isAnimating = false;
+        let p5BgInterval = null;
+
+        function spawnBurstEmojis(emojiString) {
+            const list = emojiString.split(',');
+            for (let i = 0; i < 12; i++) {
+                const el = document.createElement('div');
+                el.className = 'p5-burst-emoji';
+                el.innerText = list[i % list.length];
+                el.style.left = '50vw';
+                el.style.top = '48vh';
+
+                const angle = (Math.PI * 2 * i) / 12 + (Math.random() * 0.4 - 0.2);
+                const dist = Math.random() * 24 + 14;
+                el.style.setProperty('--bx', Math.cos(angle) * dist + 'vmin');
+                el.style.setProperty('--by', Math.sin(angle) * dist + 'vmin');
+                el.style.setProperty('--brot', (Math.random() * 90 - 45) + 'deg');
+
+                document.body.appendChild(el);
+                setTimeout(() => el.remove(), 900);
+            }
+        }
+
+        function handleStageClick() {
+            if (isAnimating) return;
+
+            if (!isRevealed) {
+                isRevealed = true;
+                isAnimating = true;
+
+                spawnBurstEmojis(revealCoverCard.dataset.emojis);
+                revealCoverCard.classList.add('peeling');
+
+                polaroidStage.classList.remove('unrevealed');
+                subtitleEl.classList.add('revealed');
+                actionBtn.classList.add('revealed');
+
+                const firstVid = cards[0].querySelector('video');
+                if (firstVid) firstVid.play().catch(() => {});
+
+                setTimeout(() => {
+                    revealCoverCard.remove();
+                    isAnimating = false;
+                }, 650);
+                return;
+            }
+
+            peelTopCard();
+        }
+
+        function peelTopCard() {
+            if (isAnimating || !isRevealed) return;
+            isAnimating = true;
+
+            const topCard = cards[currentIndex];
+            spawnBurstEmojis(topCard.dataset.emojis);
+
+            topCard.classList.add('peeling');
+            currentIndex = (currentIndex + 1) % cards.length;
+
+            const nextTopVideo = cards[currentIndex].querySelector('video');
+            if (nextTopVideo) {
+                nextTopVideo.currentTime = 0;
+                nextTopVideo.play().catch(() => {});
+            }
+
+            if (currentIndex === cards.length - 1 && !viewedAllFour) {
+                viewedAllFour = true;
+                setTimeout(() => {
+                    actionBtn.innerText = 'Now, Us🙃';
+                    actionBtn.classList.add('continue-ready');
+                }, 400);
+            }
+
+            setTimeout(() => {
+                topCard.classList.remove('peeling');
+                cards.forEach((card, idx) => {
+                    const relativePos = (idx - currentIndex + cards.length) % cards.length;
+                    card.setAttribute('data-pos', relativePos);
+
+                    const vid = card.querySelector('video');
+                    if (vid) {
+                        if (relativePos === 0) vid.play().catch(() => {});
+                        else vid.pause();
+                    }
+                });
+
+                isAnimating = false;
+            }, 520);
+        }
+
+        polaroidStage.addEventListener('click', handleStageClick);
+
+        actionBtn.addEventListener('click', () => {
+            if (!isRevealed) return;
+            if (actionBtn.classList.contains('continue-ready')) {
+                actionBtn.style.pointerEvents = 'none';
+                startVelvetTransition();
+            } else {
+                peelTopCard();
+            }
+        });
+
+        /* =========================================
+           SMOOTH PETAL-MIST & SPARKLE BREEZE TRANSITION ENGINE (PAGE 5 -> PAGE 6)
+           ========================================= */
+        let velvetStarted = false;
+
+        function startVelvetTransition() {
+            if (velvetStarted) return;
+            velvetStarted = true;
+
+            document.querySelectorAll('#page5 video').forEach(v => v.pause());
+
+            const mistOverlay = document.getElementById('smooth-mist-transition');
+            const breezeIcons = ['✨', '🌸', '💫', '🌷', '🌟'];
+
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => {
+                    const item = document.createElement('div');
+                    item.className = 'mist-breeze-item';
+                    item.innerText = breezeIcons[i % breezeIcons.length];
+                    item.style.left = (Math.random() * 92 + 4) + 'vw';
+                    item.style.fontSize = (Math.random() * 2 + 3) + 'vmin';
+                    item.style.setProperty('--driftX', (Math.random() * 14 - 7) + 'vw');
+                    item.style.setProperty('--rot', (Math.random() * 80 - 40) + 'deg');
+                    document.body.appendChild(item);
+                    setTimeout(() => item.remove(), 1900);
+                }, i * 38);
+            }
+
+            page5.style.opacity = '0';
+            page5.style.transform = 'scale(0.97)';
+            mistOverlay.classList.add('active');
+
+            setTimeout(() => {
+                if (p5BgInterval) clearInterval(p5BgInterval);
+                page5.style.display = 'none';
+                page6.style.display = 'flex';
+                initPage6Carousel();
+
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        mistOverlay.classList.remove('active');
+                        page6.classList.add('visible');
+                    });
+                });
+            }, 850);
+
+            setTimeout(() => {
+                mistOverlay.style.display = 'none';
+            }, 1800);
+        }
+
+        /* =========================================
+           AMBIENT FLOATING BACKGROUND SPARKLES (PAGE 5)
+           ========================================= */
+        const bgDecor = document.getElementById('page5-bg-decor');
+        const bgIcons = ['✨', '🩷', '🌸', '💫','💕'];
+
+        function spawnP5BgItem() {
+            const el = document.createElement('div');
+            el.className = 'p5-float-item';
+            el.innerText = bgIcons[Math.floor(Math.random() * bgIcons.length)];
+            el.style.left = (Math.random() * 92 + 4) + 'vw';
+            const dur = Math.random() * 5 + 8;
+            el.style.animationDuration = dur + 's';
+            bgDecor.appendChild(el);
+            setTimeout(() => el.remove(), dur * 1000);
+        }
+
+        function initPage5Bg() {
+            if (p5BgInterval) return;
+            for (let i = 0; i < 5; i++) setTimeout(spawnP5BgItem, i * 600);
+            p5BgInterval = setInterval(spawnP5BgItem, 1800);
+        }
+
+        /* =========================================
+           PAGE 6: RECTANGULAR SCRATCH-CARD CAROUSEL ENGINE
+           (1. first.jpg, 2. second.jpg, 3. last.jpg)
+           ========================================= */
+        const p6PhotoConfigs = [
+            {
+                candidates: ['first.jpg', 'first.jpeg', 'first.JPG', 'first.png'],
+                fit: 'cover',
+                pos: '50% 22%',
+                scale: '1',
+                useBlurBackdrop: true
+            },
+            {
+                candidates: ['second.jpg', 'second.jpeg', 'second.JPG', 'second.png'],
+                fit: 'cover',
+                pos: '50% 25%',
+                scale: '1',
+                useBlurBackdrop: true
+            },
+            {
+                candidates: ['last.jpg', 'last.jpeg', 'last.JPG', 'last.png'],
+                fit: 'cover',
+                pos: '50% 18%',
+                scale: '1',
+                useBlurBackdrop: true
+            }
+        ];
+
+        const archCards = Array.from(document.querySelectorAll('.arch-keepsake-card'));
+        const p6ActionBtn = document.getElementById('p6-action-btn');
+        const p6BgDecor = document.getElementById('page6-bg-decor');
+
+        // Preload the 3 portrait photos into the inner media-layer so the scratch canvas sits cleanly on top
+        archCards.forEach((card, idx) => {
+            const mediaLayer = card.querySelector('.media-layer');
+            tryLoadMedia(mediaLayer, p6PhotoConfigs[idx], 0, false);
+        });
+
+        let activeMomentIdx = 0;
+        let p6Sliding = false;
+        let p6BgInterval = null;
+        const scratchedState = [false, false, false];
+
+        function initPage6Carousel() {
+            for (let i = 0; i < 5; i++) setTimeout(spawnP6BgItem, i * 500);
+            p6BgInterval = setInterval(spawnP6BgItem, 1700);
+
+            // Initialize all 3 scratch cards once Page 6 is displayed and has layout dimensions
+            archCards.forEach((card, idx) => {
+                initScratchCard(card, idx);
+            });
+            updateP6ButtonVisibility();
+        }
+
+        function spawnP6BgItem() {
+            const icons = ['✨', '🌸', '🩷', '💫', '🌷'];
+            const el = document.createElement('div');
+            el.className = 'p5-float-item';
+            el.innerText = icons[Math.floor(Math.random() * icons.length)];
+            el.style.left = (Math.random() * 92 + 4) + 'vw';
+            const dur = Math.random() * 5 + 8;
+            el.style.animationDuration = dur + 's';
+            p6BgDecor.appendChild(el);
+            setTimeout(() => el.remove(), dur * 1000);
+        }
+
+        function initScratchCard(card, idx) {
+            const canvas = card.querySelector('.scratch-canvas');
+            const win = card.querySelector('.arch-photo-window');
+            const rect = win.getBoundingClientRect();
+            const w = Math.max(220, Math.round(rect.width));
+            const h = Math.max(280, Math.round(rect.height));
+
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext('2d');
+
+            // Shimmering rose-gold & pastel foil cover
+            const grad = ctx.createLinearGradient(0, 0, w, h);
+            grad.addColorStop(0, '#ffdde1');
+            grad.addColorStop(0.35, '#ffb3c6');
+            grad.addColorStop(0.68, '#ff8fa3');
+            grad.addColorStop(1, '#fce7f3');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, w, h);
+
+            // Subtle decorative sparkle dots on the foil
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
+            for (let i = 0; i < 38; i++) {
+                const sx = Math.random() * w;
+                const sy = Math.random() * h;
+                const sr = Math.random() * 3 + 1;
+                ctx.beginPath();
+                ctx.arc(sx, sy, sr, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Inner dashed border on scratch card
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.75)';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([6, 6]);
+            ctx.strokeRect(12, 12, w - 24, h - 24);
+            ctx.setLineDash([]);
+
+            // "Scratch to reveal ✨" text directly on the foil (no background box) with rich burgundy color & soft ivory glow
+            ctx.save();
+            ctx.font = `700 ${Math.max(16, Math.round(w * 0.076))}px "Quicksand", sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.shadowColor = 'rgba(255, 255, 255, 0.95)';
+            ctx.shadowBlur = 10;
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 1;
+            ctx.fillStyle = '#7a062c';
+            ctx.fillText('Scratch to reveal ✨', w / 2, h / 2);
+            ctx.restore();
+
+            let isDrawing = false;
+            let strokeMoves = 0;
+
+            function getCoords(e) {
+                const r = canvas.getBoundingClientRect();
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                return {
+                    x: ((clientX - r.left) / r.width) * w,
+                    y: ((clientY - r.top) / r.height) * h
+                };
+            }
+
+            function scratchAt(e) {
+                if (!isDrawing || scratchedState[idx] || idx !== activeMomentIdx) return;
+                if (e.cancelable) e.preventDefault();
+
+                const pos = getCoords(e);
+                ctx.globalCompositeOperation = 'destination-out';
+                ctx.beginPath();
+                ctx.arc(pos.x, pos.y, Math.max(26, w * 0.12), 0, Math.PI * 2);
+                ctx.fill();
+
+                strokeMoves++;
+                if (strokeMoves % 7 === 0) {
+                    checkScratchCompletion();
+                }
+            }
+
+            function checkScratchCompletion() {
+                if (scratchedState[idx]) return;
+                try {
+                    const imgData = ctx.getImageData(0, 0, w, h).data;
+                    let clearCount = 0;
+                    const totalSamples = imgData.length / 16;
+                    for (let i = 3; i < imgData.length; i += 16) {
+                        if (imgData[i] < 128) clearCount++;
+                    }
+                    if (clearCount / totalSamples > 0.36) {
+                        completeScratchReveal();
+                    }
+                } catch (err) {
+                    if (strokeMoves > 22) completeScratchReveal();
+                }
+            }
+
+            function completeScratchReveal() {
+                if (scratchedState[idx]) return;
+                scratchedState[idx] = true;
+                canvas.classList.add('scratched-clear');
+                card.classList.add('revealed-card');
+                spawnBurstEmojis(card.dataset.emojis);
+                updateP6ButtonVisibility();
+            }
+
+            canvas.addEventListener('mousedown', (e) => {
+                if (idx !== activeMomentIdx) return;
+                isDrawing = true;
+                scratchAt(e);
+            });
+            window.addEventListener('mousemove', scratchAt);
+            window.addEventListener('mouseup', () => { isDrawing = false; });
+
+            canvas.addEventListener('touchstart', (e) => {
+                if (idx !== activeMomentIdx) return;
+                isDrawing = true;
+                scratchAt(e);
+            }, { passive: false });
+            canvas.addEventListener('touchmove', scratchAt, { passive: false });
+            canvas.addEventListener('touchend', () => { isDrawing = false; });
+        }
+
+        function updateP6ButtonVisibility() {
+            // Initially no button on unscratched photo; button appears once current photo is scratched
+            if (!scratchedState[activeMomentIdx]) {
+                p6ActionBtn.classList.remove('show-btn', 'final-letter-btn');
+                return;
+            }
+
+            if (activeMomentIdx === 0) {
+                p6ActionBtn.innerText = 'Next moment🫶';
+                p6ActionBtn.classList.remove('final-letter-btn');
+                p6ActionBtn.classList.add('show-btn');
+            } else if (activeMomentIdx === 1) {
+                p6ActionBtn.innerText = 'Next moment🫶';
+                p6ActionBtn.classList.remove('final-letter-btn');
+                p6ActionBtn.classList.add('show-btn');
+            } else if (activeMomentIdx === 2) {
+                p6ActionBtn.innerText = 'One Last Thing 💌';
+                p6ActionBtn.classList.add('show-btn', 'final-letter-btn');
+            }
+        }
+
+        function goToMoment(targetIdx) {
+            if (p6Sliding || targetIdx === activeMomentIdx || targetIdx >= archCards.length) return;
+            p6Sliding = true;
+
+            // Hide button immediately when moving to next unscratched card
+            p6ActionBtn.classList.remove('show-btn', 'final-letter-btn');
+
+            activeMomentIdx = targetIdx;
+
+            archCards.forEach((card, i) => {
+                if (i === activeMomentIdx) {
+                    card.setAttribute('data-state', 'active');
+                } else if (i === activeMomentIdx - 1) {
+                    card.setAttribute('data-state', 'prev');
+                } else if (i === activeMomentIdx + 1) {
+                    card.setAttribute('data-state', 'next');
+                } else {
+                    card.setAttribute('data-state', 'far');
+                }
+            });
+
+            setTimeout(() => {
+                updateP6ButtonVisibility();
+                p6Sliding = false;
+            }, 650);
+        }
+
+        // Bottom button advances to next moment, or transitions to final birthday wish letter page on 3rd photo
+        p6ActionBtn.addEventListener('click', () => {
+            if (!scratchedState[activeMomentIdx]) return;
+
+            if (activeMomentIdx < 2) {
+                goToMoment(activeMomentIdx + 1);
+            } else {
+                p6ActionBtn.style.pointerEvents = 'none';
+                startFinalLetterTransition();
+            }
+        });
+
+        /* =========================================
+           SMOOTH TRANSITION TO FINAL BIRTHDAY WISH LETTER (PAGE 6 -> PAGE 7)
+           ========================================= */
+        let finalTransitionStarted = false;
+
+        function startFinalLetterTransition() {
+            if (finalTransitionStarted) return;
+            finalTransitionStarted = true;
+
+            const letterOverlay = document.getElementById('letter-breeze-transition');
+            const letterIcons = ['💌', '💖', '✨', '🌸', '🤍'];
+
+            for (let i = 0; i < 24; i++) {
+                setTimeout(() => {
+                    const item = document.createElement('div');
+                    item.className = 'mist-breeze-item';
+                    item.innerText = letterIcons[i % letterIcons.length];
+                    item.style.left = (Math.random() * 92 + 4) + 'vw';
+                    item.style.fontSize = (Math.random() * 2.2 + 3.2) + 'vmin';
+                    item.style.setProperty('--driftX', (Math.random() * 14 - 7) + 'vw');
+                    item.style.setProperty('--rot', (Math.random() * 60 - 30) + 'deg');
+                    document.body.appendChild(item);
+                    setTimeout(() => item.remove(), 2000);
+                }, i * 40);
+            }
+
+            page6.style.opacity = '0';
+            page6.style.transform = 'scale(0.97)';
+            letterOverlay.classList.add('active');
+
+            setTimeout(() => {
+                if (p6BgInterval) clearInterval(p6BgInterval);
+                page6.style.display = 'none';
+                page7.style.display = 'flex';
+
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        letterOverlay.classList.remove('active');
+                    });
+                });
+            }, 950);
+
+            setTimeout(() => {
+                letterOverlay.style.display = 'none';
+            }, 2100);
+        }
     </script>
 </body>
 </html>
