@@ -1684,10 +1684,474 @@
             pointer-events: auto;
         }
 
+        /* =========================================
+           LOCKED PAGE 7: VINTAGE SCRAPBOOK NOTEBOOK & LIVE TYPEWRITER
+           ========================================= */
         #page7 {
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            position: absolute;
+            top: 0;
+            left: 0;
             display: none;
-            background: radial-gradient(circle at 50% 45%, #fffdf9 0%, #ffe5ec 55%, #ffc2d1 100%);
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle at 50% 45%, #fffdf9 0%, #ffe5ec 52%, #ffc2d1 100%);
+            padding: clamp(14px, 3vh, 26px) clamp(14px, 4vw, 32px) calc(clamp(12px, 2.5vh, 24px) + env(safe-area-inset-bottom, 0px));
+            overflow: hidden;
             z-index: 1;
+        }
+
+        /* Ambient Floating Background (Balanced Sparkles, Stars, Flowers & Occasional Hearts) */
+        #page7-bg-decor {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .p7-float-item {
+            position: absolute;
+            bottom: -10vh;
+            font-size: clamp(16px, 2.8vmin, 25px);
+            opacity: 0;
+            animation: p7FloatUp linear forwards;
+        }
+
+        @keyframes p7FloatUp {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            15% { opacity: 0.55; }
+            85% { opacity: 0.55; }
+            100% { transform: translateY(-115vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* Outer Stage Holding the Layered Scrapbook Card */
+        .scrapbook-stage {
+            position: relative;
+            width: 100%;
+            max-width: min(92vw, 650px);
+            height: min(76dvh, 660px);
+            display: flex;
+            flex-direction: column;
+            z-index: 10;
+            opacity: 0;
+            transform: translateY(3vh) scale(0.96);
+            animation: stageEnter 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        @keyframes stageEnter {
+            0% { opacity: 0; transform: translateY(3vh) scale(0.96); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* Tilted Backing Card for Scrapbook Depth */
+        .scrapbook-backing-sheet {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, #ffdde1 0%, #ffb3c6 100%);
+            border-radius: 22px;
+            border: 3px solid rgba(255, 255, 255, 0.85);
+            transform: rotate(-2deg) translate(-5px, 6px);
+            box-shadow: 0 14px 32px rgba(144, 12, 63, 0.14);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Top Gold Spiral Rings */
+        .spiral-binding {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 82%;
+            display: flex;
+            justify-content: space-evenly;
+            z-index: 30;
+            pointer-events: none;
+        }
+
+        .spiral-ring {
+            width: clamp(9px, 1.8vmin, 13px);
+            height: clamp(20px, 3.5vmin, 26px);
+            border-radius: 8px;
+            background: linear-gradient(180deg, #fef08a 0%, #f59e0b 45%, #b45309 85%, #fde047 100%);
+            box-shadow: 0 3px 5px rgba(120, 53, 15, 0.3), inset 0 1px 2px rgba(255, 255, 255, 0.9);
+            position: relative;
+        }
+
+        .spiral-ring::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: clamp(11px, 2vmin, 15px);
+            height: 6px;
+            background: #dfaab9;
+            border-radius: 50%;
+            box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.25);
+            z-index: -1;
+        }
+
+        /* Washi Tapes on Top-Left & Bottom-Right */
+        .p7-washi-tl,
+        .p7-washi-br {
+            position: absolute;
+            width: clamp(70px, 14vmin, 105px);
+            height: clamp(18px, 3vmin, 25px);
+            z-index: 28;
+            pointer-events: none;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+            border-left: 2px dashed rgba(255, 255, 255, 0.7);
+            border-right: 2px dashed rgba(255, 255, 255, 0.7);
+        }
+
+        .p7-washi-tl {
+            top: 8px;
+            left: -12px;
+            background: rgba(255, 182, 193, 0.85);
+            transform: rotate(-32deg);
+        }
+
+        .p7-washi-br {
+            bottom: 8px;
+            right: -12px;
+            background: rgba(253, 224, 71, 0.8);
+            transform: rotate(-32deg);
+        }
+
+        /* Main Ruled Stationery Card */
+        .stationery-paper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: 
+                repeating-linear-gradient(
+                    to bottom,
+                    transparent 0px,
+                    transparent 29px,
+                    rgba(244, 172, 183, 0.22) 30px
+                ),
+                linear-gradient(180deg, #fffefb 0%, #fff6f8 100%);
+            border-radius: 20px;
+            border: 4px solid #ffffff;
+            box-shadow: 
+                0 18px 42px rgba(144, 12, 63, 0.16),
+                0 0 0 2px rgba(255, 182, 193, 0.55),
+                inset 0 0 26px rgba(255, 194, 209, 0.28);
+            padding: clamp(26px, 4.2vh, 38px) clamp(20px, 4.2vw, 40px) clamp(20px, 3.5vh, 30px);
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #ffb3c6 transparent;
+            z-index: 5;
+        }
+
+        .stationery-paper::-webkit-scrollbar {
+            width: 5px;
+        }
+        .stationery-paper::-webkit-scrollbar-thumb {
+            background-color: #ffb3c6;
+            border-radius: 10px;
+        }
+
+        /* Vertical Left Margin Line (Notebook Feel) */
+        .stationery-paper::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: clamp(14px, 2.8vw, 26px);
+            width: 1.5px;
+            background: rgba(255, 117, 143, 0.22);
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        /* Subtle Pressed Botanical Doodle in Bottom-Left Corner */
+        .pressed-flower-decor {
+            position: absolute;
+            bottom: 10px;
+            left: 14px;
+            width: clamp(34px, 6.5vmin, 48px);
+            height: clamp(34px, 6.5vmin, 48px);
+            opacity: 0.28;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        /* Interactive Ribbon Band Overlay (Tap to Untie & Start Reading) */
+        .ribbon-band-overlay {
+            position: absolute;
+            inset: 0;
+            border-radius: 20px;
+            background: rgba(255, 250, 252, 0.55);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 25;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .ribbon-band-overlay.untied {
+            opacity: 0;
+            transform: scale(1.05);
+            pointer-events: none;
+        }
+
+        .satin-ribbon-strip {
+            width: 100%;
+            height: clamp(46px, 8vh, 62px);
+            background: linear-gradient(90deg, #ff8fa3 0%, #ff477e 50%, #ff8fa3 100%);
+            box-shadow: 0 6px 20px rgba(216, 27, 96, 0.28);
+            border-top: 2px dashed rgba(255, 255, 255, 0.75);
+            border-bottom: 2px dashed rgba(255, 255, 255, 0.75);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .wax-seal-pill {
+            background: linear-gradient(135deg, #fffdf9 0%, #ffe5ec 100%);
+            border: 3px solid #ffc2d1;
+            padding: clamp(10px, 1.6vh, 14px) clamp(18px, 4vw, 30px);
+            border-radius: 50px;
+            box-shadow: 0 8px 24px rgba(144, 12, 63, 0.25);
+            font-family: 'Varela Round', sans-serif;
+            font-size: clamp(13.5px, 2.6vmin, 18.5px);
+            color: #900c3f;
+            font-weight: 700;
+            animation: sealPulse 1.8s ease-in-out infinite alternate;
+        }
+
+        @keyframes sealPulse {
+            0% { transform: scale(1); box-shadow: 0 8px 24px rgba(144, 12, 63, 0.22); }
+            100% { transform: scale(1.05); box-shadow: 0 10px 28px rgba(255, 71, 126, 0.42); }
+        }
+
+        /* Letter Body Container */
+        .letter-body {
+            position: relative;
+            z-index: 5;
+            display: flex;
+            flex-direction: column;
+            gap: clamp(10px, 1.8vh, 15px);
+            padding-left: clamp(8px, 1.4vw, 14px);
+        }
+
+        .letter-para {
+            font-family: 'Quicksand', sans-serif;
+            font-size: clamp(13.8px, 2.3vmin, 17px);
+            color: #4a1525;
+            font-weight: 600;
+            line-height: 1.56;
+            letter-spacing: 0.01em;
+        }
+
+        .letter-lead {
+            font-family: 'Varela Round', sans-serif;
+            color: #b51749;
+            font-weight: 700;
+            font-size: clamp(14.2px, 2.45vmin, 18px);
+        }
+
+        .letter-highlight {
+            font-family: 'Varela Round', sans-serif;
+            color: #900c3f;
+            font-weight: 700;
+            font-size: clamp(14.8px, 2.55vmin, 18.8px);
+        }
+
+        /* Sign-Off / Signature Area */
+        .letter-signoff {
+            margin-top: clamp(8px, 1.5vh, 14px);
+            padding-top: clamp(8px, 1.4vh, 12px);
+            border-top: 1.5px dashed rgba(216, 27, 96, 0.25);
+            text-align: right;
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(19px, 3.6vmin, 26px);
+            color: #900c3f;
+            font-weight: 700;
+            line-height: 1.3;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .letter-signoff.started {
+            opacity: 1;
+        }
+
+        /* Blinking Ink Cursor for Active Typewriter Line */
+        .ink-cursor {
+            display: inline-block;
+            width: 2.5px;
+            height: 1.05em;
+            background-color: #ec4899;
+            margin-left: 3px;
+            vertical-align: text-bottom;
+            border-radius: 2px;
+            box-shadow: 0 0 6px rgba(236, 72, 153, 0.8);
+            animation: cursorBlink 0.6s ease-in-out infinite alternate;
+        }
+
+        @keyframes cursorBlink {
+            0% { opacity: 1; }
+            100% { opacity: 0.15; }
+        }
+
+        /* Bottom Finale Button */
+        .p7-controls {
+            margin-top: clamp(12px, 2.2vh, 18px);
+            min-height: clamp(44px, 6.5dvh, 54px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 20;
+            opacity: 0;
+            transform: translateY(10px) scale(0.92);
+            pointer-events: none;
+            transition: opacity 0.65s ease, transform 0.65s cubic-bezier(0.22, 1.25, 0.36, 1);
+        }
+
+        .p7-controls.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+        }
+
+        .p7-btn {
+            font-family: 'Quicksand', sans-serif;
+            font-size: clamp(14px, 2.6vmin, 18.5px);
+            font-weight: 700;
+            color: white;
+            background: linear-gradient(135deg, #ff477e, #d81b60);
+            border: 2.5px solid #ffc2d1;
+            padding: clamp(9px, 1.3vh, 13px) clamp(22px, 4.8vw, 32px);
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 8px 22px rgba(216, 27, 96, 0.32);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            animation: gentleBtnPulse 1.8s ease-in-out infinite alternate;
+        }
+
+        @keyframes gentleBtnPulse {
+            0% { transform: scale(1); box-shadow: 0 8px 22px rgba(216, 27, 96, 0.32); }
+            100% { transform: scale(1.05); box-shadow: 0 10px 26px rgba(236, 72, 153, 0.55); }
+        }
+
+        /* =========================================
+           CUTE "THE END" FINALE OVERLAY CARD
+           ========================================= */
+        .finale-end-overlay {
+            position: absolute;
+            inset: 0;
+            border-radius: 20px;
+            background: radial-gradient(circle at 50% 42%, #fffefb 0%, #fff0f5 60%, #ffe3ec 100%);
+            border: 4px solid #ffffff;
+            z-index: 35;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: clamp(22px, 4.5vh, 40px) clamp(18px, 4.5vw, 36px);
+            opacity: 0;
+            transform: scale(0.92);
+            pointer-events: none;
+            transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .finale-end-overlay.show-end {
+            opacity: 1;
+            transform: scale(1);
+            pointer-events: auto;
+        }
+
+        .end-badge-icon {
+            font-size: clamp(44px, 9vmin, 66px);
+            margin-bottom: clamp(6px, 1.2vh, 12px);
+            filter: drop-shadow(0 6px 12px rgba(216, 27, 96, 0.18));
+            animation: floatBadge 2.4s ease-in-out infinite alternate;
+        }
+
+        @keyframes floatBadge {
+            0% { transform: translateY(0) rotate(-3deg); }
+            100% { transform: translateY(-8px) rotate(3deg); }
+        }
+
+        .end-script-title {
+            font-family: 'Pacifico', cursive;
+            font-size: clamp(22px, 4.8vmin, 34px);
+            color: #d81b60;
+            margin-bottom: clamp(12px, 2vh, 18px);
+            text-shadow: 0 2px 8px rgba(255, 255, 255, 0.9);
+        }
+
+        .end-keep-note {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px dashed #ff8fa3;
+            border-radius: 14px;
+            padding: clamp(10px, 1.6vh, 14px) clamp(14px, 3vw, 22px);
+            font-size: clamp(12.5px, 2.1vmin, 15px);
+            color: #641220;
+            font-weight: 600;
+            max-width: 420px;
+            line-height: 1.45;
+            box-shadow: 0 4px 14px rgba(144, 12, 63, 0.08);
+            margin-bottom: clamp(14px, 2.5vh, 22px);
+        }
+
+        .end-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .end-secondary-btn {
+            font-family: 'Quicksand', sans-serif;
+            font-size: clamp(12.5px, 2.1vmin, 15.5px);
+            font-weight: 700;
+            color: #900c3f;
+            background: #ffffff;
+            border: 2px solid #ffb3c6;
+            padding: 8px 18px;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(144, 12, 63, 0.1);
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        .end-secondary-btn:hover {
+            background: #fff0f3;
+            transform: translateY(-2px);
+        }
+
+        /* Celebration Sparkle Burst Particles */
+        .p7-celebrate-particle {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            font-size: clamp(18px, 3.4vmin, 28px);
+            animation: p7CelebratePop 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes p7CelebratePop {
+            0% {
+                transform: translate(-50%, -50%) scale(0.3) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(1.15) rotate(var(--rot));
+                opacity: 0;
+            }
         }
     </style>
 </head>
@@ -2259,9 +2723,87 @@
     <div id="letter-breeze-transition"></div>
 
     <!-- =========================================
-         PAGE 7 PLACEHOLDER (FINAL BIRTHDAY WISH LETTER)
+         LOCKED PAGE 7: FINAL BIRTHDAY WISH LETTER
          ========================================= -->
-    <div id="page7" class="page-container"></div>
+    <div id="page7" class="page-container">
+        <!-- Ambient Floating Sparkles & Blossoms -->
+        <div id="page7-bg-decor"></div>
+
+        <!-- Layered Scrapbook Notebook Stage -->
+        <div class="scrapbook-stage">
+            <!-- Tilted Rose Backing Card -->
+            <div class="scrapbook-backing-sheet"></div>
+
+            <!-- Gold Spiral Binding Along the Top -->
+            <div class="spiral-binding">
+                <div class="spiral-ring"></div>
+                <div class="spiral-ring"></div>
+                <div class="spiral-ring"></div>
+                <div class="spiral-ring"></div>
+                <div class="spiral-ring"></div>
+                <div class="spiral-ring"></div>
+                <div class="spiral-ring"></div>
+                <div class="spiral-ring"></div>
+            </div>
+
+            <!-- Diagonal Corner Washi Tapes -->
+            <div class="p7-washi-tl"></div>
+            <div class="p7-washi-br"></div>
+
+            <!-- Interactive Ribbon Band (Unties on Tap to Start Typewriter) -->
+            <div class="ribbon-band-overlay" id="ribbon-overlay">
+                <div class="satin-ribbon-strip">
+                    <div class="wax-seal-pill">
+                        <span>💌 A little note for you ✨ (Tap to read)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ruled Vintage Stationery Paper -->
+            <div class="stationery-paper" id="stationery-paper">
+                <!-- Subtle Pressed Botanical SVG in Bottom-Left -->
+                <svg class="pressed-flower-decor" viewBox="0 0 64 64" fill="none">
+                    <path d="M12 54 C22 40, 34 28, 48 12" stroke="#d81b60" stroke-width="2" stroke-linecap="round"/>
+                    <ellipse cx="26" cy="36" rx="8" ry="4" transform="rotate(-35 26 36)" fill="#ff758f"/>
+                    <ellipse cx="38" cy="24" rx="8" ry="4" transform="rotate(-35 38 24)" fill="#ff8fa3"/>
+                    <ellipse cx="34" cy="40" rx="7" ry="3.5" transform="rotate(25 34 40)" fill="#ffb3c6"/>
+                    <circle cx="48" cy="12" r="5" fill="#ec4899"/>
+                </svg>
+
+                <!-- Letter Paragraphs (Typed Out Letter-by-Letter) -->
+                <div class="letter-body" id="letter-body">
+                    <p class="letter-para letter-lead" id="type-p0"></p>
+                    <p class="letter-para" id="type-p1"></p>
+                    <p class="letter-para" id="type-p2"></p>
+                    <p class="letter-para" id="type-p3"></p>
+                    <p class="letter-para" id="type-p4">
+                        <span class="letter-highlight" id="type-p4-bold"></span><br id="type-p4-br" style="display:none;">
+                        <span id="type-p4-rest"></span>
+                    </p>
+                </div>
+
+                <!-- Handwritten Sign-Off -->
+                <div class="letter-signoff" id="type-signoff"></div>
+            </div>
+
+            <!-- Cute "The End" Finale Overlay (Reveals When Bottom Button is Clicked) -->
+            <div class="finale-end-overlay" id="finale-end-overlay">
+                <div class="end-badge-icon">🎂✨</div>
+                <h2 class="end-script-title">The End of Your Little Surprise!</h2>
+                <div class="end-keep-note">
+                    Whenever you need a smile, this tiny corner of the internet will always be right here waiting for you. Happiest Birthday once again! 🫶🏻✨
+                </div>
+                <div class="end-actions">
+                    <button class="end-secondary-btn" id="replay-all-btn">want to feel it again🤗</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Button (Appears right after typewriter finishes) -->
+        <div class="p7-controls" id="p7-controls">
+            <button class="p7-btn" id="p7-finish-btn">Keep Shining Always ✨</button>
+        </div>
+    </div>
 
     <script>
         /* =========================================
@@ -3536,6 +4078,7 @@
                 if (p6BgInterval) clearInterval(p6BgInterval);
                 page6.style.display = 'none';
                 page7.style.display = 'flex';
+                startP7AmbientBg();
 
                 requestAnimationFrame(() => {
                     requestAnimationFrame(() => {
@@ -3548,6 +4091,175 @@
                 letterOverlay.style.display = 'none';
             }, 2100);
         }
+
+        /* =========================================
+           LOCKED PAGE 7: VINTAGE SCRAPBOOK NOTEBOOK & LIVE TYPEWRITER ENGINE
+           ========================================= */
+        const p7BgDecor = document.getElementById('page7-bg-decor');
+        const p7Icons = ['✨', '🌸', '🌟', '🌷', '💫', '🩷'];
+        let p7BgInterval = null;
+
+        function spawnP7BgItem() {
+            const el = document.createElement('div');
+            el.className = 'p7-float-item';
+            el.innerText = p7Icons[Math.floor(Math.random() * p7Icons.length)];
+            el.style.left = (Math.random() * 92 + 4) + 'vw';
+            const dur = Math.random() * 5 + 8;
+            el.style.animationDuration = dur + 's';
+            p7BgDecor.appendChild(el);
+            setTimeout(() => el.remove(), dur * 1000);
+        }
+
+        function startP7AmbientBg() {
+            if (p7BgInterval) return;
+            for (let i = 0; i < 5; i++) setTimeout(spawnP7BgItem, i * 600);
+            p7BgInterval = setInterval(spawnP7BgItem, 1800);
+        }
+
+        const letterSegments = [
+            {
+                elId: 'type-p0',
+                text: 'Every little page has a story, and this one ends with a little note for my favorite person :)',
+                speed: 48
+            },
+            {
+                elId: 'type-p1',
+                text: 'I built you this tiny corner of the internet with my own hands, just for you💖, a little space to hold our memories, our laughs, and the special bond we share. 🫶🏻',
+                speed: 46
+            },
+            {
+                elId: 'type-p2',
+                text: 'You’ve faced so many struggles since childhood, yet you’ve always found the strength to rise above them with a smile. I hope you never forget how strong, rare, and wonderful you truly are. ❤️',
+                speed: 46
+            },
+            {
+                elId: 'type-p3',
+                text: 'Stepping into your new year, I pray life spoils you with endless happiness, good health, success, and every secret wish your heart holds. May the universe always protect your smile. ✨',
+                speed: 46
+            },
+            {
+                elId: 'type-p4-bold',
+                text: 'Happiest birthday once again, Laavi! 🩷',
+                speed: 52,
+                onComplete: () => {
+                    document.getElementById('type-p4-br').style.display = 'inline';
+                }
+            },
+            {
+                elId: 'type-p4-rest',
+                text: 'The world is so much brighter with you in it. Keep shining always, gurl! 💕',
+                speed: 48
+            },
+            {
+                elId: 'type-signoff',
+                text: 'Forever cheering for you and always on your side — From Nithin',
+                speed: 56,
+                onStart: () => {
+                    document.getElementById('type-signoff').classList.add('started');
+                }
+            }
+        ];
+
+        const cursorEl = document.createElement('span');
+        cursorEl.className = 'ink-cursor';
+        const paperContainer = document.getElementById('stationery-paper');
+        let typingStarted = false;
+
+        function splitGraphemes(str) {
+            if (typeof Intl !== 'undefined' && Intl.Segmenter) {
+                const segmenter = new Intl.Segmenter('en', { granularity: 'grapheme' });
+                return Array.from(segmenter.segment(str), s => s.segment);
+            }
+            return Array.from(str);
+        }
+
+        function typeSegment(segIndex) {
+            if (segIndex >= letterSegments.length) {
+                setTimeout(() => {
+                    cursorEl.remove();
+                    document.getElementById('p7-controls').classList.add('visible');
+                }, 400);
+                return;
+            }
+
+            const seg = letterSegments[segIndex];
+            const targetEl = document.getElementById(seg.elId);
+            if (seg.onStart) seg.onStart();
+
+            const chars = splitGraphemes(seg.text);
+            let charIdx = 0;
+            const textNode = document.createTextNode('');
+            targetEl.appendChild(textNode);
+            targetEl.appendChild(cursorEl);
+
+            function stepChar() {
+                if (charIdx < chars.length) {
+                    const ch = chars[charIdx];
+                    textNode.nodeValue += ch;
+                    charIdx++;
+
+                    if (paperContainer.scrollHeight > paperContainer.clientHeight) {
+                        paperContainer.scrollTop = paperContainer.scrollHeight;
+                    }
+
+                    let delay = seg.speed;
+                    if (ch === '.' || ch === '!' || ch === '✨' || ch === '❤️') delay = seg.speed + 260;
+                    else if (ch === ',') delay = seg.speed + 130;
+
+                    setTimeout(stepChar, delay);
+                } else {
+                    if (seg.onComplete) seg.onComplete();
+                    setTimeout(() => typeSegment(segIndex + 1), 420);
+                }
+            }
+
+            stepChar();
+        }
+
+        const ribbonOverlay = document.getElementById('ribbon-overlay');
+        ribbonOverlay.addEventListener('click', () => {
+            if (typingStarted) return;
+            typingStarted = true;
+            ribbonOverlay.classList.add('untied');
+            spawnCelebrationParticles(12);
+            setTimeout(() => {
+                typeSegment(0);
+            }, 400);
+        });
+
+        function spawnCelebrationParticles(count) {
+            const burstSymbols = ['✨', '🌸', '🌟', '🎉', '💫', '🩷', '🌷'];
+            for (let i = 0; i < count; i++) {
+                const p = document.createElement('div');
+                p.className = 'p7-celebrate-particle';
+                p.innerText = burstSymbols[i % burstSymbols.length];
+                p.style.left = '50vw';
+                p.style.top = '52vh';
+
+                const angle = (Math.PI * 2 * i) / count + (Math.random() * 0.3 - 0.15);
+                const dist = Math.random() * 30 + 12;
+                p.style.setProperty('--tx', Math.cos(angle) * dist + 'vmin');
+                p.style.setProperty('--ty', Math.sin(angle) * dist + 'vmin');
+                p.style.setProperty('--rot', (Math.random() * 120 - 60) + 'deg');
+
+                document.body.appendChild(p);
+                setTimeout(() => p.remove(), 1200);
+            }
+        }
+
+        const finishBtn = document.getElementById('p7-finish-btn');
+        const finaleOverlay = document.getElementById('finale-end-overlay');
+        const controlsContainer = document.getElementById('p7-controls');
+
+        finishBtn.addEventListener('click', () => {
+            spawnCelebrationParticles(24);
+            controlsContainer.classList.remove('visible');
+            finaleOverlay.classList.add('show-end');
+        });
+
+        document.getElementById('replay-all-btn').addEventListener('click', () => {
+            window.location.reload();
+        });
     </script>
 </body>
 </html>
